@@ -1,7 +1,11 @@
 import { Button, TextField } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers, FormikValues } from "formik"
 import React, { useState } from "react"
+import { useDispatch } from "react-redux";
 import * as Yup from "yup"
+import { loginUser } from "../../redux/auth/auth.action";
+import { useAppDispatch } from "../../redux/hook";
+import { Link } from "react-router-dom";
 
 const initialValues = { email: "", password: "" };
 const validationSchema = {
@@ -11,8 +15,10 @@ const validationSchema = {
 
 const Login = () => {
   const [formValue, setFormValue] = useState([]);
+  const dispatch = useAppDispatch();
   const handleSubmit = (values: FormikValues) => {
     console.log("handle", values);
+    dispatch(loginUser({data: values}))
   };
   return (
     <div>
@@ -39,6 +45,12 @@ const Login = () => {
             type="submit">Login</Button>
         </Form>
       </Formik>
+      <div className="flex gap-5 mt-5 items-center">
+        <h2 className="">If you don't have account?</h2>
+        <Link to={"/register"}>
+          <h2 className="text-blue-500 hover:text-blue-700">Register</h2>
+        </Link>
+      </div>
     </div>
   )
 }

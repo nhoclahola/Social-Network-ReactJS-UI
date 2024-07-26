@@ -2,6 +2,9 @@ import { Button, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } fro
 import { ErrorMessage, Field, Form, Formik, FormikHelpers, FormikValues } from "formik"
 import React, { useState } from "react"
 import * as Yup from "yup"
+import { useAppDispatch } from "../../redux/hook";
+import { registerUser } from "../../redux/auth/auth.action";
+import { Link } from "react-router-dom";
 
 const initialValues = { firstName: "", lastName: "", email: "", password: "", gender: ""};
 const validationSchema = {
@@ -11,8 +14,10 @@ const validationSchema = {
 
 const Register = () => {
   const [formValue, setFormValue] = useState([]);
+  const dispatch = useAppDispatch();
   const handleSubmit = (values: FormikValues) => {
     console.log("handle", values);
+    dispatch(registerUser({data: values}))
   };
   return (
     <div>
@@ -51,6 +56,12 @@ const Register = () => {
             type="submit">Register</Button>
         </Form>
       </Formik>
+      <div className="flex gap-x-5 mt-5 items-center">
+        <h2 className="">If you already have account?</h2>
+        <Link to={"/login"}>
+          <h2 className="text-blue-500 hover:text-blue-700">Login</h2>
+        </Link>
+      </div>
     </div>
   )
 }
