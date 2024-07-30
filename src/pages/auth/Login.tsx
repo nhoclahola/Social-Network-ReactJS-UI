@@ -47,7 +47,7 @@ const Login = () => {
       </Formik>
       <div className="flex gap-5 mt-5 items-center">
         <h2 className="">If you don't have account?</h2>
-        <Link to={"/register"}>
+        <Link to={"/register"} replace>
           <h2 className="text-blue-500 hover:text-blue-700">Register</h2>
         </Link>
       </div>

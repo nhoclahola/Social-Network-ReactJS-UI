@@ -3,8 +3,11 @@ import React from 'react'
 import Login from './Login'
 import Register from "./Register"
 import { Navigate, Outlet, Route, Routes } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
 
 const Authentication = () => {
+  const { auth } = useSelector((store: RootState) => store)
   const theme = useTheme();
   const isMdOrSmaller = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -21,9 +24,9 @@ const Authentication = () => {
                   </div>
 
                   <Routes>
-                    <Route path="*" element={<Navigate to="/login"/>}/>
-                    <Route path="login" element={<Login/>}/>
-                    <Route path="register" element={<Register/>}/>
+                    <Route path="login" element={auth.user ? <Navigate to="/"/> : <Login/>}/>
+                    <Route path="register" element={auth.user ? <Navigate to="/"/> : <Register/>}/>
+                    <Route path="*" element={auth.user ? <Navigate to="/" replace/> : <Navigate to="/login" replace/>}/>
                   </Routes>
                   {/* <Outlet></Outlet> */}
                 </Card>

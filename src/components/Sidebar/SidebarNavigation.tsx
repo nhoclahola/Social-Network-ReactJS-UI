@@ -7,7 +7,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import GroupIcon from '@mui/icons-material/Group';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-interface NavigationItem {
+export interface NavigationItem {
     title: string;
     icon: React.ReactNode;
     path: string;
@@ -20,14 +20,14 @@ export const navigationMenu: NavigationItem[] = [
         path: "/",
     },
     {
-        title: "Reels",
+        title: "Videos",
         icon: <VideoLibraryIcon/>,
-        path: "/",
+        path: "/videos",
     },
     {
-        title: "Create Reels",
+        title: "Create Video",
         icon: <QueuePlayNextIcon/>,
-        path: "/",
+        path: "/create-video",
     },
     {
         title: "Notifications",
@@ -35,9 +35,9 @@ export const navigationMenu: NavigationItem[] = [
         path: "/",
     },
     {
-        title: "Message",
+        title: "Messages",
         icon: <MessageIcon/>,
-        path: "/",
+        path: "/messages",
     },
     {
         title: "List",
@@ -52,6 +52,6 @@ export const navigationMenu: NavigationItem[] = [
     {
         title: "Profile",
         icon: <AccountCircleIcon/>,
-        path: "/",
+        path: "/profile",
     },
 ]

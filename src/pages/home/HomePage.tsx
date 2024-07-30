@@ -1,15 +1,33 @@
 import { Grid } from "@mui/material"
-import React from 'react'
-import Sidebar from "../../components/Sidebar/Sidebar"
-import { Route, Routes, useLocation } from "react-router-dom"
-import MiddlePart from "../../components/MiddlePart/MiddlePart"
-import Reels from "../../components/Reels/Reels"
-import CreateReels from "../../components/Reels/CreateReels"
-import Profile from "../../components/Profile"
-import HomeRight from "../../components/HomeRight/HomeRight"
+import React, { useEffect } from 'react'
+import Sidebar from "../../components/sidebar/Sidebar"
+import { Navigate, Route, Routes, useLocation } from "react-router-dom"
+import MiddlePart from "../../components/middle/MiddlePart"
+import Video from "../../components/video/Video"
+import CreateVideo from "../../components/video/CreateVideo"
+import Profile from "../profile/Profile"
+import HomeRight from "../../components/home_right/HomeRight"
+import ProfilePosts from "../profile/ProfilePosts"
+import ProfileVideos from "../profile/ProfileVideos"
+import ProfileSavedPosts from "../profile/ProfileSavedPosts"
+import ProfileReposts from "../profile/ProfileReposts"
+import { useDispatch, useSelector } from "react-redux"
+import { getProfileAction } from "../../redux/auth/auth.action"
+import { useAppDispatch } from "../../redux/hook"
+import { RootState } from "../../redux/store"
+import { Login } from "@mui/icons-material"
+import Message from "../message/Message"
+import ScrollToTop from "./ScrollToTop"
 
 const HomePage = () => {
   const location = useLocation();
+  const dispatch = useAppDispatch();
+  const jwt = localStorage.getItem("jwt");
+  const { auth } = useSelector((store: RootState) => store)
+  // useEffect(() => {
+  //   dispatch(getProfileAction(jwt));
+  // }, []);
+  console.log("auth", auth)
   return (
     <div className="mx-10">
         <Grid container spacing={0}>
@@ -21,18 +39,27 @@ const HomePage = () => {
 
           <Grid item className="px-5 flex justify-center" xs={12} lg={location.pathname === "/" ? 6 : 9}>
             <Routes>
-              <Route path="/" element={<MiddlePart/>}/>
-              <Route path="/reels" element={<Reels/>}/>
-              <Route path="/create-reels" element={<CreateReels/>}/>
-              <Route path="/profile/:id" element={<Profile/>}/>
+              <Route path="" element={<MiddlePart/>}/>
+              <Route path="videos" element={<Video/>}/>
+              <Route path="create-video" element={<CreateVideo/>}/>
+              <Route path="messages" element={<Message/>}/>
+              <Route path="profile/:id" element={<Profile/>}>
+                {/* replace the current history, so it does not save /profile/:id in history */}
+                <Route path="posts" element={<ProfilePosts/>}/>
+                <Route path="videos" element={<ProfileVideos/>}/>
+                <Route path="saved" element={<ProfileSavedPosts/>}/>
+                <Route path="reposts" element={<ProfileReposts/>}/>
+                <Route index path="*" element={<Navigate to="posts" replace/>}/> 
+              </Route>
+              <Route path="*" element={auth.user ? <Navigate to="" replace/> : <Navigate to="/login" replace/>}/>
             </Routes>
           </Grid>
 
-          <Grid item lg={3} className="relative">
+          {location.pathname==="/" && <Grid item lg={3} className="">
             <div className="sticky top-0 w-full">
               <HomeRight></HomeRight>
             </div>
-          </Grid>
+          </Grid>}
         </Grid>
     </div>
   )
