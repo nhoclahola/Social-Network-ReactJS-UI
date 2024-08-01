@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Authentication from './pages/auth/Authentication';
@@ -11,16 +11,32 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { useAppDispatch } from "./redux/hook";
 import { getProfileAction } from "./redux/auth/auth.action";
+import Loading from "./pages/loading/Loading";
 
 function App() {
   const { auth } = useSelector((store: RootState) => store)
   const dispatch = useAppDispatch();
   const jwt = localStorage.getItem("jwt");
-
+  const [loading, setLoading] = useState(true);
+  // useEffect(() => {
+  //   dispatch(getProfileAction(jwt));
+  //   setLoading(false);
+  // }, [jwt]);
   useEffect(() => {
-    dispatch(getProfileAction(jwt));
+    const fetchProfile = async () => {
+      if (jwt) {
+        try {
+          await dispatch(getProfileAction(jwt));
+        } catch (error) {
+          console.log("error", error);
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchProfile();
   }, [jwt]);
-    
+
   return (
     <div>
       {/* <Routes>
@@ -34,7 +50,7 @@ function App() {
         </Route>
       </Routes> */}
       <Routes>
-        <Route path="/*" element={auth.user ? <HomePage /> : <Authentication/>}></Route>
+        <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage /> : <Authentication />}></Route>
       </Routes>
     </div>
   );

@@ -13,7 +13,7 @@ import ProfileSavedPosts from "../profile/ProfileSavedPosts"
 import ProfileReposts from "../profile/ProfileReposts"
 import { useDispatch, useSelector } from "react-redux"
 import { getProfileAction } from "../../redux/auth/auth.action"
-import { useAppDispatch } from "../../redux/hook"
+import { useAppDispatch, useAppSelector } from "../../redux/hook"
 import { RootState } from "../../redux/store"
 import { Login } from "@mui/icons-material"
 import Message from "../message/Message"
@@ -21,12 +21,7 @@ import ScrollToTop from "./ScrollToTop"
 
 const HomePage = () => {
   const location = useLocation();
-  const dispatch = useAppDispatch();
-  const jwt = localStorage.getItem("jwt");
-  const { auth } = useSelector((store: RootState) => store)
-  // useEffect(() => {
-  //   dispatch(getProfileAction(jwt));
-  // }, []);
+  const auth = useAppSelector((store: RootState) => store.auth)
   console.log("auth", auth)
   return (
     <div className="mx-10">

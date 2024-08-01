@@ -12,17 +12,30 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 
-const PostCard = () => {
+interface User {
+	email: string;
+	firstName: string;
+	lastName: string;
+};
+
+interface PostCardProps {
+	caption: string;
+	createdAt: string;
+	imageUrl: string;
+	user: User;
+};
+
+const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
 	const [expanded, setExpanded] = React.useState(false);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+	const handleExpandClick = () => {
+		setExpanded(!expanded);
+	};
 	return (
 		<Card>
 			<CardHeader
 				avatar={
-					<Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+					<Avatar sx={{ width: "3rem", height: "3rem", bgcolor: red[500] }} aria-label="recipe">
 						R
 					</Avatar>
 				}
@@ -31,26 +44,23 @@ const PostCard = () => {
 						<MoreVertIcon />
 					</IconButton>
 				}
-				title="Username"
-				subheader="September 14, 2016"
+				title={user.firstName + " " + user.lastName}
+				subheader={createdAt}
 			/>
 			<CardContent sx={{ paddingTop: "4px" }}>
 				<Typography variant="body2" color="text.secondary">
-					This impressive paella is a perfect party dish and a fun meal to cook
-					together with your guests. Add 1 cup of frozen peas along with the mussels,
-					if you like.
+					{caption}
 				</Typography>
 			</CardContent>
-			<CardMedia
+			{imageUrl && <CardMedia
 				component="img"
-				height="194"
-				image="/img.png"
+				image={imageUrl}
 				alt="Paella dish"
-			/>
+			/>}
 			<CardActions className="flex justify-between" disableSpacing>
 				<div>
 					<IconButton>
-						{ true ? <FavoriteIcon/> : <FavoriteBorderIcon/> }
+						{true ? <FavoriteIcon /> : <FavoriteBorderIcon />}
 					</IconButton>
 					<IconButton>
 						<ShareIcon></ShareIcon>
@@ -60,8 +70,8 @@ const PostCard = () => {
 					</IconButton>
 				</div>
 				<IconButton>
-						{ true ? <BookmarkIcon/> : <BookmarkBorderIcon/> }
-					</IconButton>
+					{true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+				</IconButton>
 			</CardActions>
 		</Card>
 	)
