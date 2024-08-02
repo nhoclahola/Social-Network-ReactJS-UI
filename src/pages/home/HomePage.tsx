@@ -19,10 +19,12 @@ import { Login } from "@mui/icons-material"
 import Message from "../message/Message"
 import ScrollToTop from "./ScrollToTop"
 
-const HomePage = () => {
+interface HomePageProps {
+  auth: any;
+};
+
+const HomePage = ({auth}: HomePageProps) => {
   const location = useLocation();
-  const auth = useAppSelector((store: RootState) => store.auth)
-  console.log("auth", auth)
   return (
     <div className="mx-10">
         <Grid container spacing={0}>

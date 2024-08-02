@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import axios from 'axios';
-import { UPLOAD_REQUEST, UPLOAD_SUCCESS, UPLOAD_FAILURE } from './post.actionType';
+import { UPLOAD_REQUEST, UPLOAD_SUCCESS, UPLOAD_FAILURE, GET_HOMEPAGE_POSTS_REQUEST, GET_HOMEPAGE_POSTS_SUCCESS, GET_HOMEPAGE_POSTS_FAILURE, LIKE_POST_REQUEST, LIKE_POST_SUCCESS, LIKE_POST_FAILURE, GET_USERS_POSTS_REQUEST, GET_USERS_POSTS_SUCCESS, GET_USERS_POSTS_FAILURE } from './post.actionType';
 import { API_BASE_URL, api } from "../../config/api";
 
 const uploadPost = async (caption: string, image: File | null, video: File | null) => {
@@ -68,15 +68,15 @@ export const uploadPostThunk = (caption: string, image: File | null, video: File
 
 export const getHomePagePostThunk = (followingIndex: number, randomIndex: number) => {
     return async (dispatch: Dispatch) => {
-        dispatch({ type: UPLOAD_REQUEST });
+        dispatch({ type: GET_HOMEPAGE_POSTS_REQUEST });
 
         try {
             const data = await getHomePagePost(followingIndex, randomIndex);
-            dispatch({ type: UPLOAD_SUCCESS, payload: data });
+            dispatch({ type: GET_HOMEPAGE_POSTS_SUCCESS, payload: data });
             console.log("data", data);
         } 
         catch (error) {
-            dispatch({ type: UPLOAD_FAILURE, payload: error });
+            dispatch({ type: GET_HOMEPAGE_POSTS_FAILURE, payload: error });
             console.log("error", error);
         }
     };
@@ -84,14 +84,14 @@ export const getHomePagePostThunk = (followingIndex: number, randomIndex: number
 
 export const likePostThunk = (postId: string) => {
     return async (dispatch: Dispatch) => {
-        dispatch({ type: UPLOAD_REQUEST });
+        dispatch({ type: LIKE_POST_REQUEST });
 
         try {
             const data = await likePost(postId);
-            dispatch({ type: UPLOAD_SUCCESS, payload: data });
+            dispatch({ type: LIKE_POST_SUCCESS, payload: data });
         } 
         catch (error) {
-            dispatch({ type: UPLOAD_FAILURE, payload: error });
+            dispatch({ type: LIKE_POST_FAILURE, payload: error });
             console.log("error", error);
         }
     };
@@ -99,14 +99,14 @@ export const likePostThunk = (postId: string) => {
 
 export const getUsersPostThunk = (userId: string) => {
     return async (dispatch: Dispatch) => {
-        dispatch({ type: UPLOAD_REQUEST });
+        dispatch({ type: GET_USERS_POSTS_REQUEST });
 
         try {
             const data = await getUsersPost(userId);
-            dispatch({ type: UPLOAD_SUCCESS, payload: data });
+            dispatch({ type: GET_USERS_POSTS_SUCCESS, payload: data });
         } 
         catch (error) {
-            dispatch({ type: UPLOAD_FAILURE, payload: error });
+            dispatch({ type: GET_USERS_POSTS_FAILURE, payload: error });
             console.log("error", error);
         }
     };

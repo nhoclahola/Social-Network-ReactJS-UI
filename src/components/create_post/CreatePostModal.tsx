@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { uploadPostThunk } from "../../redux/post/post.action";
+import { error } from "console";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -30,7 +31,7 @@ interface FormValues {
 }
 
 const CreatePostModal = ({ open, handleClose }: CreatePostModalProps) => {
-  const { post } = useAppSelector((store: RootState) => store)
+  const upload = useAppSelector((store: RootState) => store.upload)
   const dispatch = useAppDispatch();
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -45,16 +46,16 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalProps) => {
 
   // Maybe dispatch have done but state haven't update yet even I await dispatch because state update in Redux is separate from dispatch
   React.useEffect(() => {
-    if (post.error === null) {
-      setImage(null);
-      setVideo(null);
-      formik.resetForm();
-      handleClose();
-    }
-    else {
+    if (upload.error) 
       setIsError(true);
-    }
-  }, [post.error]);
+    else
+      setIsError(false);
+  }, [upload.error]);
+
+  React.useEffect(() => {
+    if (upload.data)
+      closeModal();
+  }, [upload.data]);
 
   const [image, setImage] = React.useState<File | null>(null);
   const [video, setVideo] = React.useState<File | null>(null);
@@ -143,7 +144,7 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalProps) => {
                 <textarea className="w-full p-4 resize-none border border-black rounded-lg bg-transparent" name="caption" value={formik.values.caption}
                   onChange={formik.handleChange}
                   placeholder="Caption..." rows={4}/>
-                { isError && <Typography color="error">Error: {post.error?.response?.data?.message}</Typography> }
+                { isError && <Typography color="error">Error: {upload.error?.response?.data?.message}</Typography> }
               </div>
               <div className="flex gap-x-5 items-center mt-5">
                 <div>
@@ -175,7 +176,7 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalProps) => {
             </form>
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={post.loading}
+              open={upload.loading}
             >
               <CircularProgress color="inherit" />
             </Backdrop>

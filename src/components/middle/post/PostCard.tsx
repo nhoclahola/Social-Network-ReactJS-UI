@@ -53,6 +53,7 @@ const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
 				</Typography>
 			</CardContent>
 			{imageUrl && <CardMedia
+				className="cursor-pointer"
 				component="img"
 				image={imageUrl}
 				alt="Paella dish"

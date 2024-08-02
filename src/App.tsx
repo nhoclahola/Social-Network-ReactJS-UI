@@ -50,7 +50,7 @@ function App() {
         </Route>
       </Routes> */}
       <Routes>
-        <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage /> : <Authentication />}></Route>
+        <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage auth={auth}/> : <Authentication />}></Route>
       </Routes>
     </div>
   );
