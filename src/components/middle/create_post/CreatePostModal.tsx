@@ -3,10 +3,10 @@ import { useFormik } from "formik";
 import React from 'react'
 import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import { useAppDispatch, useAppSelector } from "../../redux/hook";
+import { useAppDispatch, useAppSelector } from "../../../redux/hook";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { uploadPostThunk } from "../../redux/post/post.action";
+import { RootState } from "../../../redux/store";
+import { uploadPostThunk } from "../../../redux/post/post.action";
 import { error } from "console";
 
 const style = {
@@ -24,13 +24,14 @@ const style = {
 export interface CreatePostModalProps {
   open: boolean;
   handleClose: () => void;
+  addPost: (post: any) => void;
 }
 
 interface FormValues {
   caption: string;
 }
 
-const CreatePostModal = ({ open, handleClose }: CreatePostModalProps) => {
+const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) => {
   const upload = useAppSelector((store: RootState) => store.upload)
   const dispatch = useAppDispatch();
   const formik = useFormik<FormValues>({
@@ -54,7 +55,10 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalProps) => {
 
   React.useEffect(() => {
     if (upload.data)
+    {
+      addPost(upload.data.result);
       closeModal();
+    }
   }, [upload.data]);
 
   const [image, setImage] = React.useState<File | null>(null);

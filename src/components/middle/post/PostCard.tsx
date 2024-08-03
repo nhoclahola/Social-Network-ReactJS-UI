@@ -11,6 +11,7 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import CommentModal from "./CommentModal";
 
 interface User {
 	email: string;
@@ -19,27 +20,17 @@ interface User {
 };
 
 interface PostCardProps {
+	postId: string;
 	caption: string;
 	createdAt: string;
 	imageUrl: string;
 	user: User;
 };
 
-const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-	// Ví dụ: Kiểm tra nếu phím Enter được nhấn
-	if (event.key === 'Enter') {
-		console.log('Enter key pressed');
-		// Thực hiện một hành động nào đó, ví dụ: gửi form
-	}
-};
-
-const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
-	const [expanded, setExpanded] = React.useState(false);
-
-	const handleExpandClick = () => {
-		setExpanded(!expanded);
-	};
-
+const PostCard = ({ postId, caption, createdAt, imageUrl, user }: PostCardProps) => {
+	const [openComment, setOpenComment] = React.useState(false);
+	const handleOpenComment = () => setOpenComment(true);
+	const handleCloseComment = () => setOpenComment(false);
 	return (
 		<Card>
 			<CardHeader
@@ -75,7 +66,7 @@ const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
 					<IconButton>
 						<ShareIcon></ShareIcon>
 					</IconButton>
-					<IconButton>
+					<IconButton onClick={handleOpenComment}>
 						<ChatBubbleIcon></ChatBubbleIcon>
 					</IconButton>
 				</div>
@@ -83,15 +74,8 @@ const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
 					{true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
 				</IconButton>
 			</CardActions>
-			<section>
-				<div className="flex items-center gap-x-5 mx-3 my-5">
-					<Avatar sx={{}} />
-					<input onKeyDown={handleKeyDown} placeholder="Write your comment" title="comment" type="text"
-						className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2" />
-
-
-				</div>
-			</section>
+			
+			{ openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}/>}
 		</Card>
 	)
 }

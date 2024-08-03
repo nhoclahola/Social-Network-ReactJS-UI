@@ -6,7 +6,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import ArticleIcon from '@mui/icons-material/Article';
 import PostCard from "./post/PostCard";
-import CreatePostModal from "../create_post/CreatePostModal";
+import CreatePostModal from "./create_post/CreatePostModal";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { getHomePagePostThunk } from "../../redux/post/post.action";
 import LoadingPost from "./loading_post/LoadingPost";
@@ -80,7 +80,6 @@ const MiddlePart = () => {
 
     // Check if user scrolled to the bottom of the page
     if (scrollTop + windowHeight >= documentHeight) {
-      // Cuộn lên trên 200px (hoặc khoảng cách mong muốn)
       window.scrollBy(0, -400);
       setFollowingIndex((prev) => prev + 10);
       setRandomIndex((prev) => prev + 2);
@@ -93,6 +92,11 @@ const MiddlePart = () => {
       window.removeEventListener('scroll', checkScrollPosition);
     };
   }, []);
+
+  // Add post when user create new Post
+  const addPost = (newPost: Post) => {
+    setPosts((prev) => [newPost, ...prev]);
+  }
 
   return (
     <div className="space-y-4 w-full">
@@ -139,14 +143,14 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="space-y-5">
-        { posts.map((item) => <PostCard key={item.postId} caption={item.caption} 
+        { posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption} 
           createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} />) }
       </div>
 
       { endOfPage ? <EndOfPage /> : <LoadingPost /> }
 
       {/* Modal */}
-      <CreatePostModal open={open} handleClose={handleClose}></CreatePostModal> 
+      <CreatePostModal open={open} handleClose={handleClose} addPost={addPost}></CreatePostModal> 
     </div>
   )
 }
