@@ -25,12 +25,21 @@ interface PostCardProps {
 	user: User;
 };
 
+const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+	// Ví dụ: Kiểm tra nếu phím Enter được nhấn
+	if (event.key === 'Enter') {
+		console.log('Enter key pressed');
+		// Thực hiện một hành động nào đó, ví dụ: gửi form
+	}
+};
+
 const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
 	const [expanded, setExpanded] = React.useState(false);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
+
 	return (
 		<Card>
 			<CardHeader
@@ -74,6 +83,15 @@ const PostCard = ({ caption, createdAt, imageUrl, user }: PostCardProps) => {
 					{true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
 				</IconButton>
 			</CardActions>
+			<section>
+				<div className="flex items-center gap-x-5 mx-3 my-5">
+					<Avatar sx={{}} />
+					<input onKeyDown={handleKeyDown} placeholder="Write your comment" title="comment" type="text"
+						className="w-full outline-none bg-transparent border border-[#3b4054] rounded-full px-5 py-2" />
+
+
+				</div>
+			</section>
 		</Card>
 	)
 }

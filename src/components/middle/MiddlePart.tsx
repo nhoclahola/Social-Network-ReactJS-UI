@@ -9,6 +9,8 @@ import PostCard from "./post/PostCard";
 import CreatePostModal from "../create_post/CreatePostModal";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { getHomePagePostThunk } from "../../redux/post/post.action";
+import LoadingPost from "./loading_post/LoadingPost";
+import EndOfPage from "./end_of_page/EndOfPage";
 
 interface User {
   userId: string;
@@ -40,18 +42,57 @@ const MiddlePart = () => {
 
   const [followingIndex, setFollowingIndex] = React.useState(0);
   const [randomIndex, setRandomIndex] = React.useState(0);
-  
+
+  const [endOfPage, setEndOfPage] = React.useState(false);
+
   React.useEffect(() => {
    dispatch(getHomePagePostThunk(followingIndex, randomIndex));
   }, [followingIndex, randomIndex]);
 
   React.useEffect(() => {
-    if (post.data && post.data.result) {
-      setPosts(post.data.result);
-    } else {
-      setPosts([]);     // Because at first, post.data is null so we need to set it to empty array to avoid error
+    if (post.data) {
+      setPosts((prev) => {
+        // To check duplicate, in the end, the random new Post will duplicate
+        const newPosts = post.data.result.filter(
+          (newPost: any) => !prev.some((prevPost) => prevPost.postId === newPost.postId)
+        );
+        if (newPosts.length === 0) {
+          window.removeEventListener('scroll', checkScrollPosition);
+          setEndOfPage(true);
+        }
+        return [...prev, ...newPosts];
+      });
+    } 
+  }, [post.data]);
+
+
+  // To debug
+  React.useEffect(() => {
+    console.log("posts", posts);
+  
+  }, [posts]);
+
+
+  const checkScrollPosition = React.useCallback(() => {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Check if user scrolled to the bottom of the page
+    if (scrollTop + windowHeight >= documentHeight) {
+      // Cuộn lên trên 200px (hoặc khoảng cách mong muốn)
+      window.scrollBy(0, -400);
+      setFollowingIndex((prev) => prev + 10);
+      setRandomIndex((prev) => prev + 2);
     }
-  }, [post])
+  }, []);
+
+  React.useEffect(() => {
+    window.addEventListener('scroll', checkScrollPosition);
+    return () => {
+      window.removeEventListener('scroll', checkScrollPosition);
+    };
+  }, []);
 
   return (
     <div className="space-y-4 w-full">
@@ -98,9 +139,11 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="space-y-5">
-        { post.loading === false && posts.map((item) => <PostCard caption={item.caption} 
+        { posts.map((item) => <PostCard key={item.postId} caption={item.caption} 
           createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} />) }
       </div>
+
+      { endOfPage ? <EndOfPage /> : <LoadingPost /> }
 
       {/* Modal */}
       <CreatePostModal open={open} handleClose={handleClose}></CreatePostModal> 

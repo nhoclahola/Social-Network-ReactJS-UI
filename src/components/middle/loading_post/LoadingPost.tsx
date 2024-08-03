@@ -3,7 +3,9 @@ import React from 'react'
 
 const LoadingPost = () => {
   return (
-    <CircularProgress color="inherit" />
+    <div className="flex justify-center items-center">
+      <CircularProgress color="inherit" />
+    </div>
   )
 }
 
