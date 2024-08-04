@@ -25,57 +25,59 @@ interface PostCardProps {
 	createdAt: string;
 	imageUrl: string;
 	user: User;
+	likedCount: number;
+	commentCount: number;
 };
 
-const PostCard = ({ postId, caption, createdAt, imageUrl, user }: PostCardProps) => {
+const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, commentCount }: PostCardProps) => {
 	const [openComment, setOpenComment] = React.useState(false);
 	const handleOpenComment = () => setOpenComment(true);
 	const handleCloseComment = () => setOpenComment(false);
+	
 	return (
-		<Card>
-			<CardHeader
-				avatar={
-					<Avatar sx={{ width: "3rem", height: "3rem", bgcolor: red[500] }} aria-label="recipe">
-						R
-					</Avatar>
-				}
-				action={
-					<IconButton aria-label="settings">
-						<MoreVertIcon />
-					</IconButton>
-				}
-				title={user.firstName + " " + user.lastName}
-				subheader={createdAt}
-			/>
-			<CardContent sx={{ paddingTop: "4px" }}>
-				<Typography variant="body2" color="text.secondary">
-					{caption}
-				</Typography>
-			</CardContent>
-			{imageUrl && <CardMedia
-				className="cursor-pointer"
-				component="img"
-				image={imageUrl}
-				alt="Paella dish"
-			/>}
-			<CardActions className="flex justify-between" disableSpacing>
-				<div>
-					<IconButton>
-						{true ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-					</IconButton>
-					<IconButton>
-						<ShareIcon></ShareIcon>
-					</IconButton>
-					<IconButton onClick={handleOpenComment}>
-						<ChatBubbleIcon></ChatBubbleIcon>
-					</IconButton>
+		<Card className="flex p-2">
+			<Avatar sx={{ width: "2.5rem", height: "2.5rem", bgcolor: red[500], margin: "0.5rem" }} aria-label="recipe">
+				R
+			</Avatar>
+			<div className="flex flex-col gap-y-2 w-full">
+				<div className="space-x-2">
+					<span className="font-bold">{user.firstName} {user.lastName}</span>
+					<span className="text-gray-500 text-sm">-{user.email}</span>
+					<span>·</span>
+					<span className="text-gray-500 text-sm">{createdAt}</span>
 				</div>
-				<IconButton>
-					{true ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-				</IconButton>
-			</CardActions>
-			
-			{ openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}/>}
+				<div className="min-h-12">
+					<p className="whitespace-pre-line">{caption}</p>
+				</div>
+				{imageUrl && <CardMedia
+					className="cursor-pointer w-full rounded-md outline outline-1 outline-slate-300"
+					component="img"
+					image={imageUrl}
+					alt="Paella dish"
+				/>}
+				<div className="flex justify-between">
+					<section className="flex gap-x-4">
+						<div>
+							<IconButton className="hover:text-red-400">
+								<FavoriteIcon/>
+							</IconButton>
+							<span>{likedCount ? likedCount : 0}</span>
+						</div>
+						<div>
+							<IconButton className="hover:text-cyan-400" onClick={handleOpenComment}>
+								<ChatBubbleIcon/>
+							</IconButton>
+							<span>{commentCount ? commentCount : 0}</span>
+						</div>
+					</section>
+					<div>
+						<IconButton className="hover:text-cyan-500">
+							<ShareIcon/>
+						</IconButton>
+					</div>
+				</div>
+			</div>
+			{openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}/>}
 		</Card>
 	)
 }

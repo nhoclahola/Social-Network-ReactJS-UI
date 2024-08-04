@@ -26,6 +26,8 @@ interface Post {
 	createdAt: string;
 	imageUrl: string;
 	user: User;
+  likedCount: number;
+  commentCount: number;
 };
 
 const MiddlePart = () => {
@@ -144,7 +146,8 @@ const MiddlePart = () => {
       </Card>
       <div className="space-y-5">
         { posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption} 
-          createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} />) }
+          createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} likedCount={item.likedCount} 
+          commentCount={item.commentCount}/>) }
       </div>
 
       { endOfPage ? <EndOfPage /> : <LoadingPost /> }

@@ -78,10 +78,10 @@ const CommentModal = ({ open, handleClose, postId }: CommentModalProps) => {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
       }
     }).then(response => {
-      setAddCommentLoading(false);
       setData((prev) => {
         return [...prev, response.data.result];
       });
+      setAddCommentLoading(false);
     }).catch(error => {
       setAddCommentError(error);
       setAddCommentLoading(false);
