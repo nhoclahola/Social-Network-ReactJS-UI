@@ -24,14 +24,18 @@ interface CommentModalProps {
   open: boolean;
   handleClose: () => void;
   postId: string;
+  likedCount: number;
+  commentCount: number;
+  setLikedCount: React.Dispatch<React.SetStateAction<number>>;
+  setCommentCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const CommentModal = ({ open, handleClose, postId }: CommentModalProps) => {
+const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, setLikedCount, setCommentCount }: CommentModalProps) => {
   const [index, setIndex] = React.useState(0);
   const [data, setData] = React.useState<CommentProps[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-  const [isEnd, setIsEnd] = React.useState(false);
+  const [isEnd, setIsEnd] = React.useState(true);
 
   const [addCommentLoading, setAddCommentLoading] = React.useState(false);
   const [addCommentError, setAddCommentError] = React.useState(null);
@@ -54,6 +58,8 @@ const CommentModal = ({ open, handleClose, postId }: CommentModalProps) => {
           );
           if (newComments.length < 5)
             setIsEnd(true);
+          else
+            setIsEnd(false);
           return [...newComments, ...prev];
         });
         setLoading(false);
@@ -77,12 +83,14 @@ const CommentModal = ({ open, handleClose, postId }: CommentModalProps) => {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
       }
-    }).then(response => {
+    }).then((response) => {
       setData((prev) => {
         return [...prev, response.data.result];
       });
+      setAddCommentError(null);
       setAddCommentLoading(false);
-    }).catch(error => {
+      setCommentCount((prev) => prev + 1);
+    }).catch((error) => {
       setAddCommentError(error);
       setAddCommentLoading(false);
       console.error(error);

@@ -9,7 +9,7 @@ import { replace } from "formik";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const { auth } = useSelector((store: RootState) => store)
+  const auth = useSelector((store: RootState) => store.auth)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

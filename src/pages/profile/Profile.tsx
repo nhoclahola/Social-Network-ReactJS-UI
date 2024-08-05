@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
 import React from 'react'
-import { Outlet, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfilePosts from "./ProfilePosts";
 import ProfileVideos from "./ProfileVideos";
 import ProfileSavedPosts from "./ProfileSavedPosts";
@@ -17,16 +17,18 @@ const tabs = [
 ]
 
 const Profile = () => {
-  const { auth } = useSelector((store: RootState) => store);
+  const auth = useSelector((store: RootState) => store.auth);
+  // Get userId from the URL param (profile/:id)
+  const { userId } = useParams();
+
   const pathname = useLocation().pathname;
   const segments = pathname.split('/').filter((segment: string) => segment.length > 0);
   let lastSegment = segments.length > 0 ? segments[segments.length - 1] : "posts";
-  
+
   // In case we go to there from profile/:id
   if (!tabs.some(tab => tab.value === lastSegment))
     lastSegment = "posts";   // Default tab
 
-  const { id } = useParams();
   const [value, setValue] = React.useState(lastSegment);
   const navigate = useNavigate();
 
@@ -72,7 +74,7 @@ const Profile = () => {
             onChange={handleChange}
             aria-label="wrapped label tabs example"
           >
-            {tabs.map((item) => <Tab value={item.value} label={item.name} />)}
+            {tabs.map((item) => <Tab key={item.name} value={item.value} label={item.name} />)}
           </Tabs>
         </Box>
         <div className="flex justify-center mt-5">
@@ -80,7 +82,14 @@ const Profile = () => {
           {value === "video" && <ProfileVideos></ProfileVideos>}
           {value === "saved" && <ProfileSavedPosts></ProfileSavedPosts>}
           {value === "repost" && <ProfileReposts></ProfileReposts>} */}
-          <Outlet />
+          {/* <Outlet /> */}
+          <Routes>
+            <Route path="posts" element={<ProfilePosts userId={userId} />} />
+            <Route path="videos" element={<ProfileVideos />} />
+            <Route path="saved" element={<ProfileSavedPosts />} />
+            <Route path="reposts" element={<ProfileReposts />} />
+            <Route index path="*" element={<Navigate to="posts" replace/>}/> 
+          </Routes>
         </div>
       </section>
 

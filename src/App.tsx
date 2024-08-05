@@ -14,7 +14,7 @@ import { getProfileAction } from "./redux/auth/auth.action";
 import Loading from "./pages/loading/Loading";
 
 function App() {
-  const { auth } = useSelector((store: RootState) => store)
+  const auth = useSelector((store: RootState) => store.auth)
   const dispatch = useAppDispatch();
   const jwt = localStorage.getItem("jwt");
   const [loading, setLoading] = useState(true);

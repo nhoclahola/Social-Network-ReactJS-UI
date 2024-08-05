@@ -14,20 +14,21 @@ import EndOfPage from "./end_of_page/EndOfPage";
 
 interface User {
   userId: string;
-	email: string;
-	firstName: string;
-	lastName: string;
+  email: string;
+  firstName: string;
+  lastName: string;
   gender: string;
 };
 
 interface Post {
   postId: string;
   caption: string;
-	createdAt: string;
-	imageUrl: string;
-	user: User;
+  createdAt: string;
+  imageUrl: string;
+  user: User;
   likedCount: number;
   commentCount: number;
+  liked: boolean;
 };
 
 const MiddlePart = () => {
@@ -35,7 +36,7 @@ const MiddlePart = () => {
   const dispatch = useAppDispatch();
   const post = useAppSelector((store) => store.post);
   const [posts, setPosts] = React.useState<Post[]>([]);
-  
+
 
   // Post modal
   const [open, setOpen] = React.useState(false);
@@ -48,7 +49,7 @@ const MiddlePart = () => {
   const [endOfPage, setEndOfPage] = React.useState(false);
 
   React.useEffect(() => {
-   dispatch(getHomePagePostThunk(followingIndex, randomIndex));
+    dispatch(getHomePagePostThunk(followingIndex, randomIndex));
   }, [followingIndex, randomIndex]);
 
   React.useEffect(() => {
@@ -64,14 +65,14 @@ const MiddlePart = () => {
         }
         return [...prev, ...newPosts];
       });
-    } 
+    }
   }, [post.data]);
 
 
   // To debug
   React.useEffect(() => {
     console.log("posts", posts);
-  
+
   }, [posts]);
 
 
@@ -104,8 +105,8 @@ const MiddlePart = () => {
     <div className="space-y-4 w-full">
       <Card className="flex items-center space-x-4 p-5 rounded-b-md">
         <div className="flex flex-col items-center cursor-pointer">
-          <Avatar sx={{width: "4rem", height: "4rem"}}>
-            <AddIcon sx={{fontSize: "3rem"}}></AddIcon>
+          <Avatar sx={{ width: "4rem", height: "4rem" }}>
+            <AddIcon sx={{ fontSize: "3rem" }}></AddIcon>
           </Avatar>
           <p>New</p>
         </div>
@@ -116,11 +117,11 @@ const MiddlePart = () => {
       <Card className="p-5">
         <div className="flex justify-between items-center">
           <Avatar></Avatar>
-          <input 
+          <input
             onClick={handleOpen}
             readOnly
-            className="w-[90%] bg-transparent rounded-full p-5 border-[#3b4054] border hover:bg-slate-600 cursor-pointer" 
-            type="text" 
+            className="w-[90%] bg-transparent rounded-full p-5 border-[#3b4054] border hover:bg-slate-600 cursor-pointer"
+            type="text"
             placeholder="What are you thinking?"></input>
         </div>
         <div className="flex justify-center space-x-5 mt-5">
@@ -145,15 +146,15 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="space-y-5">
-        { posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption} 
-          createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} likedCount={item.likedCount} 
-          commentCount={item.commentCount}/>) }
+        {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
+          createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} likedCount={item.likedCount}
+          commentCount={item.commentCount} liked={item.liked} />)}
       </div>
 
-      { endOfPage ? <EndOfPage /> : <LoadingPost /> }
+      {endOfPage ? <EndOfPage /> : <LoadingPost />}
 
       {/* Modal */}
-      <CreatePostModal open={open} handleClose={handleClose} addPost={addPost}></CreatePostModal> 
+      <CreatePostModal open={open} handleClose={handleClose} addPost={addPost}></CreatePostModal>
     </div>
   )
 }

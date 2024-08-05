@@ -12,6 +12,9 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import CommentModal from "./CommentModal";
+import axios from "axios";
+import { API_BASE_URL } from "../../../config/api";
+import { preProcessFile } from "typescript";
 
 interface User {
 	email: string;
@@ -27,13 +30,37 @@ interface PostCardProps {
 	user: User;
 	likedCount: number;
 	commentCount: number;
+	liked: boolean;
 };
 
-const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, commentCount }: PostCardProps) => {
+const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, commentCount, liked }: PostCardProps) => {
 	const [openComment, setOpenComment] = React.useState(false);
 	const handleOpenComment = () => setOpenComment(true);
 	const handleCloseComment = () => setOpenComment(false);
-	
+
+	// For update the liked and the comment count
+	const [newLikedCount, setNewLikedCount] = React.useState(likedCount ? likedCount : 0);
+	const [newCommentCount, setNewCommentCount] = React.useState(commentCount ? commentCount : 0);
+
+	const [isLiked, setIsLiked] = React.useState(liked ? liked : false);
+
+	const likePost = () => {
+		axios.put(`/api/posts/${postId}/like`, {}, {
+			baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+		}).then((response) => {
+			console.log(response.data.result)
+			setIsLiked((prevIsLiked) => {
+				setNewLikedCount((prevLikedCount) => prevIsLiked ? prevLikedCount - 1 : prevLikedCount + 1);
+				return !prevIsLiked;
+			});
+		}).catch((error) => {
+			console.error(error);
+		});
+	}
+
 	return (
 		<Card className="flex p-2">
 			<Avatar sx={{ width: "2.5rem", height: "2.5rem", bgcolor: red[500], margin: "0.5rem" }} aria-label="recipe">
@@ -58,26 +85,27 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, comm
 				<div className="flex justify-between">
 					<section className="flex gap-x-4">
 						<div>
-							<IconButton className="hover:text-red-400">
-								<FavoriteIcon/>
+							<IconButton className="hover:text-red-400" onClick={likePost}>
+								{isLiked ? <FavoriteIcon className="text-red-500" /> : <FavoriteIcon />}
 							</IconButton>
-							<span>{likedCount ? likedCount : 0}</span>
+							<span>{newLikedCount}</span>
 						</div>
 						<div>
 							<IconButton className="hover:text-cyan-400" onClick={handleOpenComment}>
-								<ChatBubbleIcon/>
+								<ChatBubbleIcon />
 							</IconButton>
-							<span>{commentCount ? commentCount : 0}</span>
+							<span>{newCommentCount}</span>
 						</div>
 					</section>
 					<div>
 						<IconButton className="hover:text-cyan-500">
-							<ShareIcon/>
+							<ShareIcon />
 						</IconButton>
 					</div>
 				</div>
 			</div>
-			{openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}/>}
+			{openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}
+				likedCount={newLikedCount} commentCount={newCommentCount} setLikedCount={setNewLikedCount} setCommentCount={setNewCommentCount} />}
 		</Card>
 	)
 }

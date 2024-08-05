@@ -40,13 +40,9 @@ const HomePage = ({auth}: HomePageProps) => {
               <Route path="videos" element={<Video/>}/>
               <Route path="create-video" element={<CreateVideo/>}/>
               <Route path="messages" element={<Message/>}/>
-              <Route path="profile/:id" element={<Profile/>}>
+              <Route path="profile/:userId/*" element={<Profile/>}>
                 {/* replace the current history, so it does not save /profile/:id in history */}
-                <Route path="posts" element={<ProfilePosts/>}/>
-                <Route path="videos" element={<ProfileVideos/>}/>
-                <Route path="saved" element={<ProfileSavedPosts/>}/>
-                <Route path="reposts" element={<ProfileReposts/>}/>
-                <Route index path="*" element={<Navigate to="posts" replace/>}/> 
+                {/* <Route index path="*" element={<Navigate to="posts" replace/>}/>  */}
               </Route>
               <Route path="*" element={auth.user ? <Navigate to="" replace/> : <Navigate to="/login" replace/>}/>
             </Routes>

@@ -7,7 +7,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
 const Authentication = () => {
-  const { auth } = useSelector((store: RootState) => store)
+  const auth = useSelector((store: RootState) => store.auth)
   const theme = useTheme();
   const isMdOrSmaller = useMediaQuery(theme.breakpoints.down('md'));
   return (
