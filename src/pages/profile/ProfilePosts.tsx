@@ -3,23 +3,7 @@ import PostCard from "../../components/middle/post/PostCard"
 import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
 import LoadingPost from "../../components/middle/loading_post/LoadingPost";
-
-interface User {
-  email: string;
-  firstName: string;
-  lastName: string;
-};
-
-interface Post {
-  postId: string;
-  caption: string;
-  createdAt: string;
-  imageUrl: string;
-  user: User;
-  likedCount: number;
-  commentCount: number;
-  liked: boolean;
-};
+import Post from "../../utils/PostInterface";
 
 interface ProfilePostsProps {
   userId: string | undefined;

@@ -4,7 +4,7 @@ import { Avatar, Button, Card, Divider, Menu, MenuItem } from "@mui/material"
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { replace } from "formik";
 
 const Sidebar = () => {
@@ -12,23 +12,34 @@ const Sidebar = () => {
   const auth = useSelector((store: RootState) => store.auth)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleNavigate = (item: NavigationItem) => {
     if (item.title === "Profile")
       navigate(`/profile/${auth.user?.userId}`, { replace: true });
     else
       navigate(item.path, { replace: true });
-  }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt");
+    window.location.reload();
+  };
+
   return (
     <Card className="h-screen flex flex-col justify-between py-5">
       <div className="space-y-4 mx-2">
-        <div className="">
-          <span className="font-bold text-xl ml-2">Y.COM</span>
+        <div className="text-center">
+          <Link to="/">
+            <span className="font-bold text-xl ml-2">Y.COM</span>
+          </Link>
         </div>
         <div className="">
           {
@@ -47,10 +58,12 @@ const Sidebar = () => {
         <Divider></Divider>
         <div className="flex justify-between items-center mt-3">
           <div className="flex items-center space-x-3 pl-5">
-            <Avatar src="https://yt3.ggpht.com/yti/ANjgQV_bVt4M2io4YPWoUqANZ4zdBOMsMep1BOXm_2PXASFc-g4=s88-c-k-c0x00ffffff-no-rj"></Avatar>
+            <Avatar>
+              {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+            </Avatar>
             <div>
               <h1 className="font-bold">{auth.user?.firstName + " " + auth.user?.lastName}</h1>
-              <p className="opacity-70">@{auth.user?.firstName.toLowerCase() + "_" + auth.user?.lastName.toLowerCase()}</p>
+              <p className="opacity-70">@{auth.user?.username}</p>
             </div>
           </div>
           <div>
@@ -72,9 +85,7 @@ const Sidebar = () => {
               'aria-labelledby': 'basic-button',
             }}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
         </div>

@@ -15,12 +15,9 @@ import CommentModal from "./CommentModal";
 import axios from "axios";
 import { API_BASE_URL } from "../../../config/api";
 import { preProcessFile } from "typescript";
-
-interface User {
-	email: string;
-	firstName: string;
-	lastName: string;
-};
+import User from "../../../utils/UserInterface";
+import { Link } from "react-router-dom";
+import formatDateFromString from "../../../utils/ConvertDate";
 
 interface PostCardProps {
 	postId: string;
@@ -31,6 +28,10 @@ interface PostCardProps {
 	likedCount: number;
 	commentCount: number;
 	liked: boolean;
+};
+
+const stopDragging = (e: React.DragEvent) => {
+  e.preventDefault();
 };
 
 const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, commentCount, liked }: PostCardProps) => {
@@ -63,15 +64,19 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, comm
 
 	return (
 		<Card className="flex p-2">
-			<Avatar sx={{ width: "2.5rem", height: "2.5rem", bgcolor: red[500], margin: "0.5rem" }} aria-label="recipe">
-				R
-			</Avatar>
+			<Link to={`/profile/${user.userId}`}>
+				<Avatar onDragStart={stopDragging} className="outline outline-2 outline-slate-300" sx={{ width: "2.5rem", height: "2.5rem", margin: "0.5rem" }} aria-label="recipe">
+					{user.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+				</Avatar>
+			</Link>
 			<div className="flex flex-col gap-y-2 w-full">
 				<div className="space-x-2">
-					<span className="font-bold">{user.firstName} {user.lastName}</span>
-					<span className="text-gray-500 text-sm">-{user.email}</span>
+					<Link to={`/profile/${user.userId}`}>
+						<span className="font-bold">{user.firstName} {user.lastName}</span>
+					</Link>
+					<span className="text-gray-500 text-sm">@{user.username}</span>
 					<span>·</span>
-					<span className="text-gray-500 text-sm">{createdAt}</span>
+					<span className="text-gray-500 text-sm">{formatDateFromString(createdAt)}</span>
 				</div>
 				<div className="min-h-12">
 					<p className="whitespace-pre-line">{caption}</p>
@@ -80,7 +85,7 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, comm
 					className="cursor-pointer w-full rounded-md outline outline-1 outline-slate-300"
 					component="img"
 					image={imageUrl}
-					alt="Paella dish"
+					alt="post image"
 				/>}
 				<div className="flex justify-between">
 					<section className="flex gap-x-4">

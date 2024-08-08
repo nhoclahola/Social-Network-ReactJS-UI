@@ -23,37 +23,37 @@ interface HomePageProps {
   auth: any;
 };
 
-const HomePage = ({auth}: HomePageProps) => {
+const HomePage = ({ auth }: HomePageProps) => {
   const location = useLocation();
   return (
     <div className="mx-10">
-        <Grid container spacing={0}>
-          <Grid item xs={0} lg={3}>
-            <div className="sticky top-0">
-              <Sidebar></Sidebar>
-            </div>
-          </Grid>
-
-          <Grid item className="px-5 flex justify-center" xs={12} lg={location.pathname === "/" ? 6 : 9}>
-            <Routes>
-              <Route path="" element={<MiddlePart/>}/>
-              <Route path="videos" element={<Video/>}/>
-              <Route path="create-video" element={<CreateVideo/>}/>
-              <Route path="messages" element={<Message/>}/>
-              <Route path="profile/:userId/*" element={<Profile/>}>
-                {/* replace the current history, so it does not save /profile/:id in history */}
-                {/* <Route index path="*" element={<Navigate to="posts" replace/>}/>  */}
-              </Route>
-              <Route path="*" element={auth.user ? <Navigate to="" replace/> : <Navigate to="/login" replace/>}/>
-            </Routes>
-          </Grid>
-
-          {location.pathname==="/" && <Grid item lg={3} className="">
-            <div className="sticky top-0 w-full">
-              <HomeRight></HomeRight>
-            </div>
-          </Grid>}
+      <Grid container spacing={0}>
+        <Grid item xs={0} lg={3}>
+          <div className="sticky top-0">
+            <Sidebar></Sidebar>
+          </div>
         </Grid>
+
+        <Grid item className="px-5 flex justify-center" xs={12} lg={location.pathname === "/" ? 6 : 9}>
+          <Routes>
+            <Route path="" element={<MiddlePart />} />
+            <Route path="videos" element={<Video />} />
+            <Route path="create-video" element={<CreateVideo />} />
+            <Route path="messages" element={<Message />} />
+            <Route path="profile/:userId/*" element={<Profile />}>
+              {/* replace the current history, so it does not save /profile/:id in history */}
+              {/* <Route index path="*" element={<Navigate to="posts" replace/>}/>  */}
+            </Route>
+            <Route path="*" element={auth.user ? <Navigate to="" replace /> : <Navigate to="/login" replace />} />
+          </Routes>
+        </Grid>
+
+        {location.pathname === "/" && <Grid item lg={3} className="">
+          <div className="sticky top-0 w-full">
+            <HomeRight></HomeRight>
+          </div>
+        </Grid>}
+      </Grid>
     </div>
   )
 }

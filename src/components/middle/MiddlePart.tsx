@@ -1,7 +1,6 @@
-import { Avatar, Card, IconButton } from "@mui/material"
+import { Avatar, Card, Divider, IconButton } from "@mui/material"
 import React from 'react'
 import AddIcon from '@mui/icons-material/Add';
-import StoryCircle from "./StoryCircle";
 import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -11,32 +10,35 @@ import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { getHomePagePostThunk } from "../../redux/post/post.action";
 import LoadingPost from "./loading_post/LoadingPost";
 import EndOfPage from "./end_of_page/EndOfPage";
-
-interface User {
-  userId: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-};
-
-interface Post {
-  postId: string;
-  caption: string;
-  createdAt: string;
-  imageUrl: string;
-  user: User;
-  likedCount: number;
-  commentCount: number;
-  liked: boolean;
-};
+import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
+import Post from "../../utils/PostInterface";
+import User from "../../utils/UserInterface";
+import LatestActivityFollowings from "./LatestActivityFollowings";
 
 const MiddlePart = () => {
   const stories = [1, 1, 1, 1, 1,];
-  const dispatch = useAppDispatch();
-  const post = useAppSelector((store) => store.post);
-  const [posts, setPosts] = React.useState<Post[]>([]);
+  const auth = useAppSelector((store) => store.auth);
 
+  const [latestActivityFollowingsUsers, setLatestActivityFollowingsUsers] = React.useState<User[]>([]);
+  const [loadingLatestActivityFollowingsUsers, setLoadingLatestActivityFollowingsUsers] = React.useState(true);
+  const [errorLatestActivityFollowingsUsers, setErrorLatestActivityFollowingsUsers] = React.useState(null);
+
+  React.useEffect(() => {
+    setLoadingLatestActivityFollowingsUsers(true);
+    axios.get(`/api/users/latest-activity-followings`, {
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    }).then((response) => {
+      setLatestActivityFollowingsUsers(response.data.result);
+      setLoadingLatestActivityFollowingsUsers(false);
+    }).catch((error) => {
+      setErrorLatestActivityFollowingsUsers(error);
+      setLoadingLatestActivityFollowingsUsers(false);
+    })
+  }, []);
 
   // Post modal
   const [open, setOpen] = React.useState(false);
@@ -46,28 +48,43 @@ const MiddlePart = () => {
   const [followingIndex, setFollowingIndex] = React.useState(0);
   const [randomIndex, setRandomIndex] = React.useState(0);
 
+  const [posts, setPosts] = React.useState<Post[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
   const [endOfPage, setEndOfPage] = React.useState(false);
 
   React.useEffect(() => {
-    dispatch(getHomePagePostThunk(followingIndex, randomIndex));
-  }, [followingIndex, randomIndex]);
-
-  React.useEffect(() => {
-    if (post.data) {
-      setPosts((prev) => {
-        // To check duplicate, in the end, the random new Post will duplicate
-        const newPosts = post.data.result.filter(
-          (newPost: any) => !prev.some((prevPost) => prevPost.postId === newPost.postId)
-        );
-        if (newPosts.length === 0) {
-          window.removeEventListener('scroll', checkScrollPosition);
-          setEndOfPage(true);
-        }
-        return [...prev, ...newPosts];
+    setLoading(true);
+    axios.get(`/api/posts/homepage`, {
+      params: {
+        followingIndex: followingIndex,
+        randomIndex: randomIndex
+      },
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    })
+      .then(response => {
+        setPosts((prev) => {
+          // To check duplicate, in the end, the random new Post will duplicate
+          const newPosts = response.data.result.filter(
+            (newPost: Post) => !prev.some((prevPost) => prevPost.postId === newPost.postId)
+          );
+          if (newPosts.length === 0) {
+            window.removeEventListener('scroll', checkScrollPosition);
+            setEndOfPage(true);
+          }
+          return [...prev, ...newPosts];
+        });
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
       });
-    }
-  }, [post.data]);
-
+  }, [followingIndex, randomIndex]);
 
   // To debug
   React.useEffect(() => {
@@ -104,19 +121,18 @@ const MiddlePart = () => {
   return (
     <div className="space-y-4 w-full">
       <Card className="flex items-center space-x-4 p-5 rounded-b-md">
-        <div className="flex flex-col items-center cursor-pointer">
-          <Avatar sx={{ width: "4rem", height: "4rem" }}>
-            <AddIcon sx={{ fontSize: "3rem" }}></AddIcon>
-          </Avatar>
-          <p>New</p>
-        </div>
         {
-          stories.map((item) => <StoryCircle></StoryCircle>)
+          loadingLatestActivityFollowingsUsers ? <LoadingPost /> :
+            latestActivityFollowingsUsers.map((item) => <LatestActivityFollowings key={item.userId} avatarUrl={item.avatarUrl}
+              coverPhotoUrl={item.coverPhotoUrl} email={item.email} firstName={item.firstName}
+              lastName={item.lastName} gender={item.gender} username={item.username} userId={item.userId} ></LatestActivityFollowings>)
         }
       </Card>
-      <Card className="p-5">
+      <Card className="p-10">
         <div className="flex justify-between items-center">
-          <Avatar></Avatar>
+          <Avatar>
+            {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+          </Avatar>
           <input
             onClick={handleOpen}
             readOnly
@@ -124,28 +140,8 @@ const MiddlePart = () => {
             type="text"
             placeholder="What are you thinking?"></input>
         </div>
-        <div className="flex justify-center space-x-5 mt-5">
-          <div className="flex items-center">
-            <IconButton color="primary" className="w-20" onClick={handleOpen}>
-              <ImageIcon></ImageIcon>
-            </IconButton>
-            <span>Media</span>
-          </div>
-          <div className="flex items-center">
-            <IconButton color="primary" className="w-20" onClick={handleOpen}>
-              <VideoLibraryIcon></VideoLibraryIcon>
-            </IconButton>
-            <span>Video</span>
-          </div>
-          <div className="flex items-center">
-            <IconButton color="primary" className="w-20" onClick={handleOpen}>
-              <ArticleIcon></ArticleIcon>
-            </IconButton>
-            <span>Article</span>
-          </div>
-        </div>
       </Card>
-      <div className="space-y-5">
+      <div className="space-y-6">
         {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
           createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} likedCount={item.likedCount}
           commentCount={item.commentCount} liked={item.liked} />)}

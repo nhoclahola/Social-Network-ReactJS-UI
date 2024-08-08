@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { uploadPostThunk } from "../../../redux/post/post.action";
 import { error } from "console";
+import axios from "axios";
+import { API_BASE_URL } from "../../../config/api";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -29,44 +31,66 @@ export interface CreatePostModalProps {
 
 interface FormValues {
   caption: string;
-}
+};
+
+interface Post {
+  postId: string;
+  caption: string;
+  imageUrl: string;
+  createdAt: string;
+  user: User;
+};
+
+interface User {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  gender: boolean;
+};
 
 const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) => {
-  const upload = useAppSelector((store: RootState) => store.upload)
-  const dispatch = useAppDispatch();
+  const auth = useAppSelector((store) => store.auth);
+
+  const [data, setData] = React.useState<Post | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<any>(null);
+
+  const [image, setImage] = React.useState<File | null>(null);
+  // const [video, setVideo] = React.useState<File | null>(null);
+
+  const [imageObjectUrl, setImageObjectUrl] = React.useState<string | undefined>(undefined);
+  // const [videoObjectUrl, setVideoObjectUrl] = React.useState<string | undefined>(undefined);
+
   const formik = useFormik<FormValues>({
     initialValues: {
       caption: "",
     },
-    onSubmit: async (values) => {
-      await dispatch(uploadPostThunk(values.caption, image, video));
+    onSubmit: (values) => {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('caption', values.caption);
+      // If either image or video is null, append an empty file to prevent error
+      const emptyFile = new File([], '');
+      formData.append('image', image || emptyFile);
+      axios.post(`${API_BASE_URL}/api/posts`, formData, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "multipart/form-data"
+        }
+      }).then((response) => {
+        setData(response.data.result);
+        addPost(response.data.result);
+        setLoading(false);
+        closeModal();
+      }).catch((error) => {
+        console.error("error", error);
+        setError(error);
+        setLoading(false);
+      });
     }
   });
-
-  const [isError, setIsError] = React.useState(false);
-
-  // Maybe dispatch have done but state haven't update yet even I await dispatch because state update in Redux is separate from dispatch
-  React.useEffect(() => {
-    if (upload.error) 
-      setIsError(true);
-    else
-      setIsError(false);
-  }, [upload.error]);
-
-  React.useEffect(() => {
-    if (upload.data)
-    {
-      addPost(upload.data.result);
-      closeModal();
-    }
-  }, [upload.data]);
-
-  const [image, setImage] = React.useState<File | null>(null);
-  const [video, setVideo] = React.useState<File | null>(null);
-
-  const [imageObjectUrl, setImageObjectUrl] = React.useState<string | undefined>(undefined);
-  const [videoObjectUrl, setVideoObjectUrl] = React.useState<string | undefined>(undefined);
-
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -90,31 +114,30 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
     };
   }, [image]);
 
-  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setVideo(event.target.files[0]);
-    }
-  };
+  // const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     setVideo(event.target.files[0]);
+  //   }
+  // };
 
-  React.useEffect(() => {
-    let objectUrl: string | null = null;
-    if (video) {
-      objectUrl = URL.createObjectURL(video);
-      setVideoObjectUrl(objectUrl);
-    }
-    return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-        console.log("revoked video url", objectUrl);
-      }
-    };
-  }, [video]);
+  // React.useEffect(() => {
+  //   let objectUrl: string | null = null;
+  //   if (video) {
+  //     objectUrl = URL.createObjectURL(video);
+  //     setVideoObjectUrl(objectUrl);
+  //   }
+  //   return () => {
+  //     if (objectUrl) {
+  //       URL.revokeObjectURL(objectUrl);
+  //       console.log("revoked video url", objectUrl);
+  //     }
+  //   };
+  // }, [video]);
 
   // Clear when close modal
   const closeModal = () => {
     setImage(null);
-    setVideo(null);
-    setIsError(false);
+    setError(null);
     formik.resetForm();
     handleClose();
   };
@@ -138,17 +161,19 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
           <Box sx={style}>
             <form className="space-y-5" onSubmit={formik.handleSubmit}>
               <div className="flex gap-x-4 items-center">
-                <Avatar></Avatar>
+                <Avatar>
+                  {auth?.user?.avatarUrl && <img src={auth?.user?.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+                </Avatar>
                 <div>
-                  <p className="font-bold text-lg">nhoclahola</p>
-                  <p className="text-sm">@nhoclahola</p>
+                  <p className="font-bold text-lg">{auth?.user?.firstName} {auth?.user?.lastName}</p>
+                  <p className="text-sm">@{auth?.user?.username}</p>
                 </div>
               </div>
               <div>
                 <textarea className="w-full p-4 resize-none border border-black rounded-lg bg-transparent" name="caption" value={formik.values.caption}
                   onChange={formik.handleChange}
-                  placeholder="Caption..." rows={4}/>
-                { isError && <Typography color="error">Error: {upload.error?.response?.data?.message}</Typography> }
+                  placeholder="Caption..." rows={4} />
+                {error && <Typography color="error">Error: {error?.message}</Typography>}
               </div>
               <div className="flex gap-x-5 items-center mt-5">
                 <div>
@@ -160,7 +185,7 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
                   </label>
                   <span>Image</span>
                 </div>
-                <div>
+                {/* <div>
                   <input className="hidden" placeholder="video" id="video-input" type="file" accept="video/*" onChange={handleVideoChange} ></input>
                   <label htmlFor="video-input">
                     <IconButton color="primary" component="span">
@@ -168,11 +193,11 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
                     </IconButton>
                   </label>
                   <span>Video</span>
-                </div>
+                </div> */}
               </div>
               <div className="flex justify-start gap-x-4 flex-wrap">
                 {image && <img src={imageObjectUrl} title="Image" className="h-[10rem]"></img>}
-                {video && <video src={videoObjectUrl} title="Video" controls className="h-[10rem]"></video>}
+                {/* {video && <video src={videoObjectUrl} title="Video" controls className="h-[10rem]"></video>} */}
               </div>
               <div className="flex w-full justify-end">
                 <Button variant="outlined" type="submit" sx={{ borderRadius: "1.5rem" }}>Post</Button>
@@ -180,7 +205,7 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
             </form>
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={upload.loading}
+              open={loading}
             >
               <CircularProgress color="inherit" />
             </Backdrop>

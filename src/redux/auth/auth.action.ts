@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Dispatch } from "redux";
 import { API_BASE_URL, api } from "../../config/api";
-import { GET_PROFILE_FAILURE, GET_PROFILE_REQUEST, GET_PROFILE_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, UPDATE_PROFILE_FAILURE, UPDATE_PROFILE_REQUEST, UPDATE_PROFILE_SUCCESS } from "./auth.actionType";
+import { GET_PROFILE_FAILURE, GET_PROFILE_REQUEST, GET_PROFILE_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, UPDATE_PROFILE_FAILURE, UPDATE_PROFILE_REQUEST, UPDATE_PROFILE_SUCCESS, UPLOAD_AVATAR_FAILURE, UPLOAD_AVATAR_REQUEST, UPLOAD_AVATAR_SUCCESS } from "./auth.actionType";
 
 const login = async (loginData: any) => {
     console.log("loginData", loginData.data)
@@ -23,6 +23,36 @@ export const loginThunk = (loginData: any) => {
             console.log("error", error);
         }
     };
+};
+
+const uploadAvatar = async (image: File | null,) => {
+	const formData = new FormData();
+	// If avatar is null, append an empty file to prevent error
+	const emptyFile = new File([], '');
+	formData.append('image', image || emptyFile);
+	const response = await axios.post(`${API_BASE_URL}/api/users/avatar`, formData, {
+		headers: {
+			"Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+			"Content-Type": "multipart/form-data"
+		}
+	});
+	return response.data;
+};
+
+export const uploadAvatarThunk = (image: File | null) => {
+	return async (dispatch: Dispatch) => {
+		dispatch({ type: UPLOAD_AVATAR_REQUEST });
+
+		try {
+			const data = await uploadAvatar(image);
+			dispatch({ type: UPLOAD_AVATAR_SUCCESS, payload: data });
+            console.log("avatar--", data);
+		}
+		catch (error) {
+			dispatch({ type: UPLOAD_AVATAR_FAILURE, payload: error });
+			console.log("error", error);
+		}
+	};
 };
 
 export const loginUser = (loginData: any) => async (dispatch: Dispatch) => {

@@ -19,8 +19,8 @@ const Authentication = () => {
               <div className={`flex flex-col justify-center px-4 md:px-20 h-full ${isMdOrSmaller ? 'bg-custom-image' : ''}`}>
                 <Card className="p-8">
                   <div className="flex flex-col mb-5 space-y-1">
-                    <h1 className="text-center">Neo Zing</h1>
-                    <p className="text-center">This is the new social newwork called Neo Zing to nostalgize Zing Me</p>
+                    <h1 className="text-center font-bold text-xl">Y.COM</h1>
+                    <p className="text-center">This is the new social newwork</p>
                   </div>
 
                   <Routes>

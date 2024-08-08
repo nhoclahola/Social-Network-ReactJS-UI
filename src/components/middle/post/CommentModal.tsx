@@ -6,6 +6,7 @@ import Comment, { CommentProps } from "./Comment";
 import LoadingComment from "./LoadingComment";
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
+import { useAppSelector } from "../../../redux/hook";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -31,6 +32,7 @@ interface CommentModalProps {
 };
 
 const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, setLikedCount, setCommentCount }: CommentModalProps) => {
+  const auth = useAppSelector((store) => store.auth);
   const [index, setIndex] = React.useState(0);
   const [data, setData] = React.useState<CommentProps[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -153,7 +155,9 @@ const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, set
             </div>
             <Divider />
             <section className="h-20 flex items-center gap-x-5 mx-3">
-              <Avatar sx={{}} />
+              <Avatar>
+                {auth?.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+              </Avatar>
               <div className="relative w-full">
                 <textarea ref={inputRef} onKeyDown={handleKeyDown} rows={2} placeholder="Write your comment" title="comment"
                   className="w-full resize-none outline-none bg-transparent border border-[#3b4054] rounded-lg px-5 py-2" />
