@@ -5,6 +5,7 @@ export default interface Post {
   caption: string;
   createdAt: string;
   imageUrl: string;
+  videoUrl: string;
   user: User;
   likedCount: number;
   commentCount: number;

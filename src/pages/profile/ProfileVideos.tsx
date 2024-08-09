@@ -1,5 +1,5 @@
 import React from 'react'
-import UserVideo from "../../components/video/UserVideo";
+import UserVideo from "../video/UserVideo";
 
 const ProfileVideos = React.memo(() => {
   const videos = [1, 1, 1, 1, 1];

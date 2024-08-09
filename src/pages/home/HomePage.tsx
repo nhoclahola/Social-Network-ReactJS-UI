@@ -3,8 +3,7 @@ import React, { useEffect } from 'react'
 import Sidebar from "../../components/sidebar/Sidebar"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import MiddlePart from "../../components/middle/MiddlePart"
-import Video from "../../components/video/Video"
-import CreateVideo from "../../components/video/CreateVideo"
+import Video from "../video/Video"
 import Profile from "../profile/Profile"
 import HomeRight from "../../components/home_right/HomeRight"
 import ProfilePosts from "../profile/ProfilePosts"
@@ -18,6 +17,7 @@ import { RootState } from "../../redux/store"
 import { Login } from "@mui/icons-material"
 import Message from "../message/Message"
 import ScrollToTop from "./ScrollToTop"
+import Search from "../search/Search"
 
 interface HomePageProps {
   auth: any;
@@ -26,19 +26,19 @@ interface HomePageProps {
 const HomePage = ({ auth }: HomePageProps) => {
   const location = useLocation();
   return (
-    <div className="mx-10">
-      <Grid container spacing={0}>
-        <Grid item xs={0} lg={3}>
+    // <div className="mx-10">
+      <Grid container spacing={0} className="h-full bg-slate-50">
+        <Grid item xs={0} md={3}>
           <div className="sticky top-0">
             <Sidebar></Sidebar>
           </div>
         </Grid>
 
-        <Grid item className="px-5 flex justify-center" xs={12} lg={location.pathname === "/" ? 6 : 9}>
+        <Grid item className="px-5 flex justify-center" xs={12} md={6}>
           <Routes>
             <Route path="" element={<MiddlePart />} />
             <Route path="videos" element={<Video />} />
-            <Route path="create-video" element={<CreateVideo />} />
+            <Route path="search" element={<Search />} />
             <Route path="messages" element={<Message />} />
             <Route path="profile/:userId/*" element={<Profile />}>
               {/* replace the current history, so it does not save /profile/:id in history */}
@@ -48,13 +48,18 @@ const HomePage = ({ auth }: HomePageProps) => {
           </Routes>
         </Grid>
 
-        {location.pathname === "/" && <Grid item lg={3} className="">
+        {/* {location.pathname === "/" && <Grid item lg={3} className="">
           <div className="sticky top-0 w-full">
             <HomeRight></HomeRight>
           </div>
-        </Grid>}
+        </Grid>} */}
+        <Grid item xs={0} md={3} className="">
+          <div className="sticky top-0 w-full">
+            <HomeRight></HomeRight>
+          </div>
+        </Grid>
       </Grid>
-    </div>
+    // </div>
   )
 }
 

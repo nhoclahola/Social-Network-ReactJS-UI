@@ -10,6 +10,7 @@ import { uploadPostThunk } from "../../../redux/post/post.action";
 import { error } from "console";
 import axios from "axios";
 import { API_BASE_URL } from "../../../config/api";
+import { isNull } from "util";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -50,6 +51,16 @@ interface User {
   gender: boolean;
 };
 
+interface ImageOrVideo {
+  image: File | null;
+  video: File | null;
+};
+
+interface ObjectUrl {
+  imageObjectUrl: string | null;
+  videoObjectUrl: string | null;
+}
+
 const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) => {
   const auth = useAppSelector((store) => store.auth);
 
@@ -57,11 +68,9 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<any>(null);
 
-  const [image, setImage] = React.useState<File | null>(null);
-  // const [video, setVideo] = React.useState<File | null>(null);
+  const [media, setMedia] = React.useState<ImageOrVideo | null>(null);
 
-  const [imageObjectUrl, setImageObjectUrl] = React.useState<string | undefined>(undefined);
-  // const [videoObjectUrl, setVideoObjectUrl] = React.useState<string | undefined>(undefined);
+  const [objectUrl, setObjectUrl] = React.useState<ObjectUrl | null>(null);
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -73,11 +82,10 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
       formData.append('caption', values.caption);
       // If either image or video is null, append an empty file to prevent error
       const emptyFile = new File([], '');
-      formData.append('image', image || emptyFile);
+      formData.append('file', media?.image ? media?.image : media?.video ? media?.video : emptyFile);
       axios.post(`${API_BASE_URL}/api/posts`, formData, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
-          "Content-Type": "multipart/form-data"
         }
       }).then((response) => {
         setData(response.data.result);
@@ -94,7 +102,17 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setImage(event.target.files[0]);
+      setMedia({ image: event.target.files[0], video: null });
+      // Reset input 
+      event.target.value = '';
+    }
+  };
+
+  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setMedia({ image: null, video: event.target.files[0] });
+      // Reset input 
+      event.target.value = '';
     }
   };
 
@@ -102,41 +120,32 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
 
   React.useEffect(() => {
     let objectUrl: string | null = null;
-    if (image) {
-      objectUrl = URL.createObjectURL(image);
-      setImageObjectUrl(objectUrl);
+    if (media?.image) {
+      objectUrl = URL.createObjectURL(media?.image);
+      setObjectUrl({ imageObjectUrl: objectUrl, videoObjectUrl: null });
+    }
+    else if (media?.video) {
+      objectUrl = URL.createObjectURL(media?.video);
+      setObjectUrl({ imageObjectUrl: null, videoObjectUrl: objectUrl });
     }
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl);
-        console.log("revoked image url", objectUrl);
+        console.log("revoked file url", objectUrl);
       }
     };
-  }, [image]);
-
-  // const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     setVideo(event.target.files[0]);
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   let objectUrl: string | null = null;
-  //   if (video) {
-  //     objectUrl = URL.createObjectURL(video);
-  //     setVideoObjectUrl(objectUrl);
-  //   }
-  //   return () => {
-  //     if (objectUrl) {
-  //       URL.revokeObjectURL(objectUrl);
-  //       console.log("revoked video url", objectUrl);
-  //     }
-  //   };
-  // }, [video]);
+  }, [media]);
 
   // Clear when close modal
   const closeModal = () => {
-    setImage(null);
+    if (objectUrl?.imageObjectUrl) {
+      URL.revokeObjectURL(objectUrl.imageObjectUrl);
+    }
+    if (objectUrl?.videoObjectUrl) {
+      URL.revokeObjectURL(objectUrl.videoObjectUrl);
+    }
+    setObjectUrl({ imageObjectUrl: null, videoObjectUrl: null });
+    setMedia(null);
     setError(null);
     formik.resetForm();
     handleClose();
@@ -185,7 +194,7 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
                   </label>
                   <span>Image</span>
                 </div>
-                {/* <div>
+                <div>
                   <input className="hidden" placeholder="video" id="video-input" type="file" accept="video/*" onChange={handleVideoChange} ></input>
                   <label htmlFor="video-input">
                     <IconButton color="primary" component="span">
@@ -193,11 +202,11 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
                     </IconButton>
                   </label>
                   <span>Video</span>
-                </div> */}
+                </div>
               </div>
               <div className="flex justify-start gap-x-4 flex-wrap">
-                {image && <img src={imageObjectUrl} title="Image" className="h-[10rem]"></img>}
-                {/* {video && <video src={videoObjectUrl} title="Video" controls className="h-[10rem]"></video>} */}
+                {objectUrl?.imageObjectUrl && <img src={objectUrl?.imageObjectUrl} title="Image" className="h-[10rem]"></img>}
+                {objectUrl?.videoObjectUrl && <video src={objectUrl?.videoObjectUrl} title="Video" className="h-[10rem]" controls></video>}
               </div>
               <div className="flex w-full justify-end">
                 <Button variant="outlined" type="submit" sx={{ borderRadius: "1.5rem" }}>Post</Button>

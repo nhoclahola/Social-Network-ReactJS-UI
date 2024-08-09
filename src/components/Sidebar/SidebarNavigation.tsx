@@ -6,6 +6,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import GroupIcon from '@mui/icons-material/Group';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SearchIcon from '@mui/icons-material/Search';
 
 export interface NavigationItem {
     title: string;
@@ -16,42 +17,42 @@ export interface NavigationItem {
 export const navigationMenu: NavigationItem[] = [
     {
         title: "Home",
-        icon: <HomeIcon/>,
+        icon: <HomeIcon />,
         path: "/",
     },
     {
         title: "Videos",
-        icon: <VideoLibraryIcon/>,
+        icon: <VideoLibraryIcon />,
         path: "/videos",
     },
     {
-        title: "Create Video",
-        icon: <QueuePlayNextIcon/>,
-        path: "/create-video",
+        title: "Search",
+        icon: <SearchIcon />,
+        path: "/search",
     },
     {
         title: "Notifications",
-        icon: <NotificationsIcon/>,
+        icon: <NotificationsIcon />,
         path: "/",
     },
     {
         title: "Messages",
-        icon: <MessageIcon/>,
+        icon: <MessageIcon />,
         path: "/messages",
     },
     {
         title: "List",
-        icon: <ListAltIcon/>,
+        icon: <ListAltIcon />,
         path: "/",
     },
     {
         title: "Communities",
-        icon: <GroupIcon/>,
+        icon: <GroupIcon />,
         path: "/",
     },
     {
         title: "Profile",
-        icon: <AccountCircleIcon/>,
+        icon: <AccountCircleIcon />,
         path: "/profile",
     },
 ]

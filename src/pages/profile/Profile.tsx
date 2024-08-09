@@ -101,7 +101,7 @@ const Profile = () => {
 	}
 
   return (
-    <Card className="pb-10 w-[80%]">
+    <Card className="pb-10 w-full">
       <div className="h-[15rem] bg-slate-400">
         {user?.coverPhotoUrl && <img alt="cover" className="w-full h-full rounded-md" src={user?.coverPhotoUrl}></img>}
       </div>

@@ -24,6 +24,7 @@ interface PostCardProps {
 	caption: string;
 	createdAt: string;
 	imageUrl: string;
+	videoUrl: string;
 	user: User;
 	likedCount: number;
 	commentCount: number;
@@ -34,7 +35,7 @@ const stopDragging = (e: React.DragEvent) => {
   e.preventDefault();
 };
 
-const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, commentCount, liked }: PostCardProps) => {
+const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedCount, commentCount, liked }: PostCardProps) => {
 	const [openComment, setOpenComment] = React.useState(false);
 	const handleOpenComment = () => setOpenComment(true);
 	const handleCloseComment = () => setOpenComment(false);
@@ -81,12 +82,15 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, user, likedCount, comm
 				<div className="min-h-12">
 					<p className="whitespace-pre-line">{caption}</p>
 				</div>
-				{imageUrl && <CardMedia
+				{imageUrl ? <CardMedia
 					className="cursor-pointer w-full rounded-md outline outline-1 outline-slate-300"
 					component="img"
-					image={imageUrl}
+					image={imageUrl} 
 					alt="post image"
-				/>}
+				/> : videoUrl && <video controls className="w-full rounded-md outline outline-1 outline-slate-300">
+				<source src={videoUrl} type="video/mp4" />
+				Your browser does not support the video tag.
+			</video>}
 				<div className="flex justify-between">
 					<section className="flex gap-x-4">
 						<div>

@@ -1,0 +1,82 @@
+import React from 'react'
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import PostCard from "../../components/middle/post/PostCard";
+import Post from "../../utils/PostInterface";
+import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
+import { set } from "lodash";
+import LoadingPost from "../../components/middle/loading_post/LoadingPost";
+import EndOfVideo from "./EndOfVideo";
+
+const Video = () => {
+  const [index, setIndex] = React.useState(0);
+  const [posts, setPosts] = React.useState<Post[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  const [endOfPage, setEndOfPage] = React.useState(false);
+
+  React.useEffect(() => {
+    setLoading(true);
+    axios.get(`/api/posts/popular_videos`, {
+      params: {
+        index: index
+      },
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    })
+      .then(response => {
+        setPosts((prev) => {
+          // To check duplicate, in the end, the random new Post will duplicate
+          const newPosts = response.data.result.filter(
+            (newPost: Post) => !prev.some((prevPost) => prevPost.postId === newPost.postId)
+          );
+          if (newPosts.length < 10) {
+            window.removeEventListener('scroll', checkScrollPosition);
+            setEndOfPage(true);
+          }
+          return [...prev, ...newPosts];
+        });
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [index]);
+
+  React.useEffect(() => {
+    console.log(index);
+  }, [index])
+
+  const checkScrollPosition = React.useCallback(() => {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Check if user scrolled to the bottom of the page
+    if (scrollTop + windowHeight >= documentHeight) {
+      window.scrollBy(0, -400);
+      setIndex((prev) => prev + 10);
+    }
+  }, []);
+
+  return (
+    <div className="w-full bg-slate-50">
+      <div className="flex flex-col justify-center items-center font-bold text-2xl my-8 sticky top-0 z-10 bg-slate-50">
+        <h1>Popular videos</h1>
+        <OndemandVideoIcon />
+      </div>
+      <div className="space-y-6">
+        {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
+          createdAt={item.createdAt} imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
+          commentCount={item.commentCount} liked={item.liked} />)}
+      </div>
+
+      {endOfPage ? <EndOfVideo /> : <LoadingPost />}
+    </div>
+  )
+}
+
+export default Video

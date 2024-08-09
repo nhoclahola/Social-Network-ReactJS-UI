@@ -17,7 +17,6 @@ import User from "../../utils/UserInterface";
 import LatestActivityFollowings from "./LatestActivityFollowings";
 
 const MiddlePart = () => {
-  const stories = [1, 1, 1, 1, 1,];
   const auth = useAppSelector((store) => store.auth);
 
   const [latestActivityFollowingsUsers, setLatestActivityFollowingsUsers] = React.useState<User[]>([]);
@@ -72,7 +71,7 @@ const MiddlePart = () => {
           const newPosts = response.data.result.filter(
             (newPost: Post) => !prev.some((prevPost) => prevPost.postId === newPost.postId)
           );
-          if (newPosts.length === 0) {
+          if (newPosts.length < 1) {
             window.removeEventListener('scroll', checkScrollPosition);
             setEndOfPage(true);
           }
@@ -128,9 +127,9 @@ const MiddlePart = () => {
               lastName={item.lastName} gender={item.gender} username={item.username} userId={item.userId} ></LatestActivityFollowings>)
         }
       </Card>
-      <Card className="p-10">
+      <Card className="p-4">
         <div className="flex justify-between items-center">
-          <Avatar>
+          <Avatar className="mr-6">
             {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
           </Avatar>
           <input
@@ -143,7 +142,7 @@ const MiddlePart = () => {
       </Card>
       <div className="space-y-6">
         {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
-          createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} likedCount={item.likedCount}
+          createdAt={item.createdAt} imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
           commentCount={item.commentCount} liked={item.liked} />)}
       </div>
 

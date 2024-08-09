@@ -54,8 +54,8 @@ const ProfilePosts = React.memo(({ userId }: ProfilePostsProps) => {
   return (
     <div className="space-y-5 w-[100%]">
       {data.map((item) => <div key={item.postId} className="border border-slate-100 rounded-md">
-        <PostCard postId={item.postId} caption={item.caption}
-          createdAt={item.createdAt} imageUrl={item.imageUrl} user={item.user} likedCount={item.likedCount}
+        <PostCard postId={item.postId} caption={item.caption} createdAt={item.createdAt}
+          imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
           commentCount={item.commentCount} liked={item.liked} />
       </div>)}
       {loading && <LoadingPost />}
