@@ -118,7 +118,7 @@ const MiddlePart = () => {
   }
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-4 w-full px-5">
       <Card className="flex items-center space-x-4 p-5 rounded-b-md">
         {
           loadingLatestActivityFollowingsUsers ? <LoadingPost /> :

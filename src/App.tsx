@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Authentication from './pages/auth/Authentication';
 import { Navigate, Route, Routes } from "react-router-dom";
-import Message from "./pages/message/Message";
+import Message from "./pages/message/MessagePage";
 import HomePage from "./pages/home/HomePage";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";

@@ -13,7 +13,13 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 600,
+  width: {
+    xs: "90vw",
+    sm: "70vw",
+    md: "60vw",
+    lg: "50vw",
+    xl: "40vw",
+  },
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
@@ -139,9 +145,8 @@ const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, set
             <div className="flex justify-end">
               <CancelIcon sx={{ width: "2rem", height: "2rem" }} onClick={handleClose} className="hover:text-red-500 cursor-pointer" />
             </div>
-            <div style={{ minHeight: "40vh", maxHeight: "60vh", overflowY: "auto" }}>
+            <div className="min-h-[40vh] max-h-[60vh] overflow-y-auto">
               {!isEnd && <h1 onClick={loadMoreComment} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">Load more older comments</h1>}
-              {/* <Comment content="abc" commentId="sadasda" user={{ userId: "ác", email: "ac", firstName: "sc", lastName: "cc" }} createdAt="avva" /> */}
               {loading && <LoadingComment />}
               <div className="space-y-2">
                 {data.map((comment) =>

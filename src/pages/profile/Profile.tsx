@@ -101,12 +101,12 @@ const Profile = () => {
 	}
 
   return (
-    <Card className="pb-10 w-full">
-      <div className="h-[15rem] bg-slate-400">
+    <div className="pb-10 w-full px-5">
+      <div onDragStart={stopDragging}  className="h-[15rem] bg-slate-400 cursor-pointer">
         {user?.coverPhotoUrl && <img alt="cover" className="w-full h-full rounded-md" src={user?.coverPhotoUrl}></img>}
       </div>
       <div className="px-5 flex justify-between items-start mt-5 h-[4rem]">
-        <Avatar onDragStart={stopDragging} className="transform -translate-y-24 outline outline-4 outline-slate-300" sx={{ width: "10rem", height: "10rem" }}>
+        <Avatar onDragStart={stopDragging} className="transform -translate-y-24 outline outline-4 outline-slate-300 cursor-pointer" sx={{ width: "10rem", height: "10rem" }}>
           {user?.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
         </Avatar>
         {auth?.user?.userId === userId ? <Button onClick={handleOpen} sx={{ borderRadius: "40px" }} variant="outlined">Edit Profile</Button> : <Button onClick={followUser} sx={{ borderRadius: "40px" }} variant="outlined">{isFollow ? "Unfollow" : "Follow"}</Button>}
@@ -163,7 +163,7 @@ const Profile = () => {
       {auth?.user?.userId === userId && <section>
         <EditProfileModal open={open} handleClose={handleClose} setUser={setUser}></EditProfileModal>
       </section>}
-    </Card>
+    </div>
   )
 }
 

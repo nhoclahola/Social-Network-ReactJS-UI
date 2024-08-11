@@ -14,6 +14,7 @@ const Video = () => {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   const [endOfPage, setEndOfPage] = React.useState(false);
+  const [resetKey, setResetKey] = React.useState(0);
 
   React.useEffect(() => {
     setLoading(true);
@@ -36,6 +37,7 @@ const Video = () => {
             window.removeEventListener('scroll', checkScrollPosition);
             setEndOfPage(true);
           }
+          console.log("newPosts", newPosts);
           return [...prev, ...newPosts];
         });
         setLoading(false);
@@ -44,11 +46,7 @@ const Video = () => {
         setError(error);
         setLoading(false);
       });
-  }, [index]);
-
-  React.useEffect(() => {
-    console.log(index);
-  }, [index])
+  }, [index, resetKey]);
 
   const checkScrollPosition = React.useCallback(() => {
     const scrollTop = window.scrollY;
@@ -62,11 +60,24 @@ const Video = () => {
     }
   }, []);
 
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+    setIndex(0);
+    setPosts([]);
+    setEndOfPage(false);
+    setResetKey((prev) => prev + 1);
+  };
+
   return (
-    <div className="w-full bg-slate-50">
-      <div className="flex flex-col justify-center items-center font-bold text-2xl my-8 sticky top-0 z-10 bg-slate-50">
-        <h1>Popular videos</h1>
-        <OndemandVideoIcon />
+    <div className="w-full bg-slate-50 px-5">
+      <div className="flex justify-center font-bold text-2xl my-8 sticky top-0 z-10 bg-slate-50">
+        <div onClick={handleScrollToTop} className="flex flex-col justify-center items-center cursor-pointer">
+          <h1>Popular videos</h1>
+          <OndemandVideoIcon />
+        </div>
       </div>
       <div className="space-y-6">
         {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}

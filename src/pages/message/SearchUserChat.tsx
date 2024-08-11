@@ -5,10 +5,11 @@ import User from "../../utils/UserInterface";
 import lodash from "lodash";
 import truncateUsername from "../../utils/TruncateName";
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Divider } from "@mui/material";
+import { Avatar, Divider, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
+import MapsUgcIcon from '@mui/icons-material/MapsUgc';
 
-const SearchUser = () => {
+const SearchUserChat = () => {
   const [users, setUsers] = React.useState<User[]>([]);
   const [openSearch, setOpenSearch] = React.useState<boolean>(false);
 
@@ -62,26 +63,45 @@ const SearchUser = () => {
     };
   }, []);
 
+  const createChat = (userId: string) => {
+    axios.post(`/api/chats/users/${userId}`, {
+    }, {
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    }).then((response) => {
+      console.log(response.data);
+    }).catch((error) => {
+      console.error("error", error);
+    });
+  }
+
   return (
-    <div className="relative z-[1]">
+    <div className="relative z-[1] w-[60%]">
       <input onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
       </input>
       {openSearch && <section ref={searchSectionRef} className="border absolute w-full bg-white whitespace-nowrap shadow-xl rounded-xl">
         <div className="mt-1"></div>
         {users.map(user => (
-          <Link to={`/profile/${user?.userId}`} key={user?.userId}>
-            <div className="hover:bg-slate-200 flex items-center gap-4 p-2">
-              <SearchIcon />
-              <Avatar className="outline outline-2 outline-slate-300" sx={{ width: "2.3rem", height: "2.3rem" }}>
-                {user?.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
-              </Avatar>
-              <div className="flex flex-col">
-                <h1 className="font-bold">{truncateUsername(user?.firstName + " " + user?.lastName, 12)}</h1>
-                <h1>@{truncateUsername(user?.username, 10)}</h1>
+          <div className="flex justify-between items-center px-2">
+            <Link to={`/profile/${user?.userId}`} key={user?.userId} className="w-full" >
+              <div className="hover:bg-slate-200 flex items-center gap-4 p-2">
+                <SearchIcon />
+                <Avatar className="outline outline-2 outline-slate-300" sx={{ width: "2.3rem", height: "2.3rem" }}>
+                  {user?.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+                </Avatar>
+                <div className="flex flex-col">
+                  <h1 className="font-bold">{truncateUsername(user?.firstName + " " + user?.lastName, 12)}</h1>
+                  <h1>@{truncateUsername(user?.username, 10)}</h1>
+                </div>
               </div>
-            </div>
-            <Divider />
-          </Link>
+              <Divider />
+            </Link>
+            <IconButton onClick={() => createChat(user.userId)} >
+              <MapsUgcIcon />
+            </IconButton>
+          </div>
         ))}
         <div className="cursor-pointer">
           <h1 className="p-2 text-center">Search more...</h1>
@@ -91,4 +111,4 @@ const SearchUser = () => {
   )
 }
 
-export default SearchUser
+export default SearchUserChat
