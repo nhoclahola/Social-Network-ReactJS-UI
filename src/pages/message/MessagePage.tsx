@@ -7,6 +7,9 @@ import SearchUserChatModal from "./SearchUserChatModal";
 import ChatInterface from "../../utils/ChatInterface";
 import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 
 const Message = () => {
   const [chats, setChats] = React.useState<ChatInterface[]>([]);
@@ -14,7 +17,7 @@ const Message = () => {
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     axios.get(`/api/chats/user-chat`, {
       baseURL: API_BASE_URL,
       headers: {
@@ -22,10 +25,10 @@ const Message = () => {
       }
     }).then((response) => {
       setChats(response.data.result);
-      setLoading(false);
+      // setLoading(false);
     }).catch((error) => {
       setError(true);
-      setLoading(false);
+      // setLoading(false);
     });
   }, []);
 
@@ -42,6 +45,37 @@ const Message = () => {
 
   const [selectedChat, setSelectedChat] = React.useState<ChatInterface | null>(null);
 
+  const socketRef = React.useRef<WebSocket | null>(null);
+  const [stompClient, setStompClient] = React.useState<Stomp.Client | null>(null);
+  React.useEffect(() => {
+    setLoading(true);
+    const sock = new SockJS(API_BASE_URL + "/ws");
+    const client = Stomp.over(sock);
+    setStompClient(client);
+    socketRef.current = sock;
+    client.connect({}, () => {
+      console.log('Connected');
+      setLoading(false);
+      // Add other subscriptions if needed
+    }, (error) => {
+      console.error('Error:', error);
+      setLoading(false);
+    });
+    // Cleanup function to disconnect STOMP client when component unmounts
+    return () => {
+      if (stompClient) {
+        stompClient.disconnect(() => {
+          console.log('STOMP client disconnected');
+        });
+      }
+      // Close the SockJS connection
+      if (socketRef.current) {
+        socketRef.current.close();
+        console.log('SockJS connection closed');
+      }
+    };
+  }, []);
+
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -51,12 +85,12 @@ const Message = () => {
         </div>
         <div className="flex flex-col gap-y-4 h-[90vh] overflow-y-scroll">
           {/* {users.map((user, index) => <UserMessage key={index}></UserMessage> )} */}
-          {chats.map((chat, index) => <UserChat key={chat.chatId} chat={chat} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />)}
+          {loading ? <LoadingPost /> : chats.map((chat, index) => <UserChat key={chat.chatId} chat={chat} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />)}
         </div>
       </Grid>
       <Grid item xs={8}>
         <div className="w-full">
-          <Chat chat={selectedChat} />
+          <Chat stompClient={stompClient} chat={selectedChat} />
         </div>
       </Grid>
       {openSearch && <SearchUserChatModal open={openSearch} handleClose={closeSearchChat} />}

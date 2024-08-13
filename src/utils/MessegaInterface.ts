@@ -4,6 +4,6 @@ export default interface MessageInterface {
   messageId: string;
   content: string;
   imageUrl: string | null;
-  timeStamp: string;
+  timestamp: string;
   user: User;
 };
