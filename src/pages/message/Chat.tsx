@@ -13,13 +13,15 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import truncateUsername from "../../utils/TruncateName";
 import LoadingPost from "../../components/middle/loading_post/LoadingPost";
+import { Link } from "react-router-dom";
 
 interface ChatProps {
   chat: ChatInterface | null;
   stompClient: Stomp.Client | null;
+  setChats: React.Dispatch<React.SetStateAction<ChatInterface[]>>;
 }
 
-const Chat = ({ chat, stompClient }: ChatProps) => {
+const Chat = ({ chat, stompClient, setChats }: ChatProps) => {
   const auth = useAppSelector((store) => store.auth);
 
   const [messages, setMessages] = React.useState<MessageInterface[]>([]);
@@ -54,8 +56,24 @@ const Chat = ({ chat, stompClient }: ChatProps) => {
         setLoading(false);
       })
     }
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   }, [chat]);
 
+  // To scroll to the bottom of div when first loading
+  const hasRun = React.useRef(false);
+  React.useEffect(() => {
+    if (!hasRun.current && messages.length > 0) {
+      hasRun.current = true;
+      const div = divRef.current;
+      if (div) {
+        div.scrollTop = div.scrollHeight;
+      }
+    }
+  }, [messages])
+
+  // Load more messages when user scroll
   React.useEffect(() => {
     if (chat && index > 0) {
       // setLoading(true);
@@ -124,6 +142,12 @@ const Chat = ({ chat, stompClient }: ChatProps) => {
       subscription = stompClient?.subscribe(`/user/${chat?.chatId}/private`, (message) => {
         const newMessage: MessageInterface = JSON.parse(message.body);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setChats(prevChats => {
+          console.log(prevChats);
+          // Remove the chat from the list
+          const updatedChats = prevChats.filter(prevChat => prevChat.chatId !== chat.chatId);
+          return [chat, ...updatedChats];
+        });
         setIsNewMessageFromSocket(true); // Mark that this is a new message from socket
       }, {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`
@@ -209,12 +233,12 @@ const Chat = ({ chat, stompClient }: ChatProps) => {
   return (
     <div className="h-screen overflow-hidden">
       <div className="h-[10vh] flex justify-between items-center p-4 bg-slate-300">
-        <div className="flex items-center gap-x-2">
+        <Link to={`/profile/${user?.userId}`} className="flex items-center gap-x-2">
           <Avatar sx={{ width: "3rem", height: "3rem" }}>
             {user?.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
           </Avatar>
-          <h1 onClick={() => setIndex((prev) => prev + 10)} className="font-bold text-xl">{truncateUsername(user?.firstName + " " + user?.lastName, 20)}</h1>
-        </div>
+          <h1 className="font-bold text-xl">{truncateUsername(user?.firstName + " " + user?.lastName, 20)}</h1>
+        </Link>
         <LocalPhoneIcon />
       </div>
       <div ref={divRef} className="p-4 flex flex-col gap-y-4 h-[80vh] overflow-y-scroll">

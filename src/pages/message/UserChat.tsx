@@ -4,6 +4,8 @@ import ChatInterface from "../../utils/ChatInterface";
 import { useAppSelector } from "../../redux/hook";
 import truncateUsername from "../../utils/TruncateName";
 
+// For user chat list
+
 interface UserChatProps {
   chat: ChatInterface;
   selectedChat: ChatInterface | null;

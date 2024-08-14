@@ -10,6 +10,8 @@ import { API_BASE_URL } from "../../config/api";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import LoadingPost from "../../components/middle/loading_post/LoadingPost";
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 const Message = () => {
   const [chats, setChats] = React.useState<ChatInterface[]>([]);
@@ -85,12 +87,30 @@ const Message = () => {
         </div>
         <div className="flex flex-col gap-y-4 h-[90vh] overflow-y-scroll">
           {/* {users.map((user, index) => <UserMessage key={index}></UserMessage> )} */}
-          {loading ? <LoadingPost /> : chats.map((chat, index) => <UserChat key={chat.chatId} chat={chat} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />)}
+          {loading ? <LoadingPost /> :
+            <AnimatePresence>
+              {chats.map(chat => (
+                <motion.div
+                  key={chat.chatId}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <UserChat
+                    chat={chat}
+                    selectedChat={selectedChat}
+                    setSelectedChat={setSelectedChat}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          }
         </div>
       </Grid>
       <Grid item xs={8}>
         <div className="w-full">
-          <Chat stompClient={stompClient} chat={selectedChat} />
+          <Chat stompClient={stompClient} chat={selectedChat} setChats={setChats} />
         </div>
       </Grid>
       {openSearch && <SearchUserChatModal open={openSearch} handleClose={closeSearchChat} />}
