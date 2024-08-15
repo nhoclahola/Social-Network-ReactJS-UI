@@ -6,9 +6,11 @@ import lodash from "lodash";
 import truncateUsername from "../../utils/TruncateName";
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar, Divider } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SearchUser = () => {
+  const navigate = useNavigate();
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [users, setUsers] = React.useState<User[]>([]);
   const [openSearch, setOpenSearch] = React.useState<boolean>(false);
 
@@ -16,7 +18,8 @@ const SearchUser = () => {
     if (query.length > 0)
       axios.get(`/api/users/search`, {
         params: {
-          query: query
+          query: query,
+          index: 0
         },
         baseURL: API_BASE_URL,
         headers: {
@@ -64,7 +67,7 @@ const SearchUser = () => {
 
   return (
     <div className="relative z-[1]">
-      <input onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
+      <input ref={inputRef} onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
       </input>
       {openSearch && <section ref={searchSectionRef} className="border absolute w-full bg-white whitespace-nowrap shadow-xl rounded-xl">
         <div className="mt-1"></div>
@@ -83,7 +86,7 @@ const SearchUser = () => {
             <Divider />
           </Link>
         ))}
-        <div className="cursor-pointer">
+        <div onClick={() => navigate(`/search?query=${inputRef?.current?.value}`)} className="cursor-pointer">
           <h1 className="p-2 text-center">Search more...</h1>
         </div>
       </section>}

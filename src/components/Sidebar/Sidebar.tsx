@@ -4,11 +4,12 @@ import { Avatar, Button, Card, Divider, Menu, MenuItem } from "@mui/material"
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { replace } from "formik";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const auth = useSelector((store: RootState) => store.auth)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -24,6 +25,12 @@ const Sidebar = () => {
   const handleNavigate = (item: NavigationItem) => {
     if (item.title === "Profile")
       navigate(`/profile/${auth.user?.userId}`, { replace: true });
+    else if (item.title === "Search") {
+      if (!!location.search && location.pathname === "/search")
+        navigate(item.path + location.search, { replace: true });
+      else
+        navigate(item.path, { replace: true });
+    }
     else
       navigate(item.path, { replace: true });
   };

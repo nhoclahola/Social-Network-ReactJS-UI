@@ -60,6 +60,13 @@ const Video = () => {
     }
   }, []);
 
+  React.useEffect(() => {
+    window.addEventListener('scroll', checkScrollPosition);
+    return () => {
+      window.removeEventListener('scroll', checkScrollPosition);
+    };
+  }, []);
+
   const handleScrollToTop = () => {
     window.scrollTo({
       top: 0,

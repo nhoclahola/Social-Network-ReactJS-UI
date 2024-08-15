@@ -23,8 +23,8 @@ interface PostCardProps {
 	postId: string;
 	caption: string;
 	createdAt: string;
-	imageUrl: string;
-	videoUrl: string;
+	imageUrl: string | null;
+	videoUrl: string | null;
 	user: User;
 	likedCount: number;
 	commentCount: number;

@@ -4,7 +4,7 @@ export default interface User {
 	lastName: string;
 	username: string;
 	email: string;
-	gender: boolean;
-	avatarUrl: string;
-	coverPhotoUrl: string;
+	gender: boolean | null;
+	avatarUrl: string | null;
+	coverPhotoUrl: string | null;
 };

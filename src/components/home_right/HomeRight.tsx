@@ -6,8 +6,10 @@ import User from "../../utils/UserInterface";
 import { API_BASE_URL } from "../../config/api";
 import axios from "axios";
 import LoadingPost from "../middle/loading_post/LoadingPost";
+import { useLocation } from "react-router-dom";
 
 const HomeRight = () => {
+  const location = useLocation();
   const [users, setUsers] = React.useState<User[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -30,7 +32,7 @@ const HomeRight = () => {
 
   return (
     <div className="mt-4 space-y-4">
-      <SearchUser></SearchUser>
+      {location.pathname !== "/search" && <SearchUser></SearchUser>}
       <Card className="p-2">
         <div className="flex justify-between items-center py-5">
           <p className="font-semibold opacity-70">Suggestions for you</p>
