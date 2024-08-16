@@ -7,6 +7,7 @@ import LoadingComment from "./LoadingComment";
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
 import { useAppSelector } from "../../../redux/hook";
+import CommentInterface from "../../../utils/CommentInterface";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -40,7 +41,7 @@ interface CommentModalProps {
 const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, setLikedCount, setCommentCount }: CommentModalProps) => {
   const auth = useAppSelector((store) => store.auth);
   const [index, setIndex] = React.useState(0);
-  const [data, setData] = React.useState<CommentProps[]>([]);
+  const [data, setData] = React.useState<CommentInterface[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   const [isEnd, setIsEnd] = React.useState(true);
@@ -62,7 +63,7 @@ const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, set
       .then(response => {
         setData((prev) => {
           const newComments = response.data.result.filter(
-            (newComment: CommentProps) => !prev.some((prevComment) => prevComment.commentId === newComment.commentId)
+            (newComment: CommentInterface) => !prev.some((prevComment) => prevComment.commentId === newComment.commentId)
           );
           if (newComments.length < 5)
             setIsEnd(true);
@@ -151,10 +152,7 @@ const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, set
               <div className="space-y-2">
                 {data.map((comment) =>
                   <Comment key={comment.commentId}
-                    commentId={comment.commentId}
-                    content={comment.content}
-                    createdAt={comment.createdAt}
-                    user={comment.user} />)}
+                    comment={comment} />)}
               </div>
               {data.length === 0 && <Typography className="text-center py-8">No comments</Typography>}
             </div>

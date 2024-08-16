@@ -53,11 +53,14 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
       }
 		}).then((response) => {
-			console.log(response.data.result)
-			setIsLiked((prevIsLiked) => {
-				setNewLikedCount((prevLikedCount) => prevIsLiked ? prevLikedCount - 1 : prevLikedCount + 1);
-				return !prevIsLiked;
-			});
+			if (response.data.result === "liked") {
+				setIsLiked(true);
+				setNewLikedCount((prev) => prev + 1);
+			}
+			else if (response.data.result === "unliked") {
+				setIsLiked(false);
+				setNewLikedCount((prev) => prev - 1);
+			}
 		}).catch((error) => {
 			console.error(error);
 		});

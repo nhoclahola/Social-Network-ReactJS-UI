@@ -172,26 +172,22 @@ const Search = () => {
         </div>
       </section>
       <section className="space-y-3">
-        <div>
-          <h1 className="font-bold font-mono text-xl">People</h1>
-        </div>
+        {users.length > 0 && <h1 className="font-bold font-mono text-xl">People:</h1>}
         <div className="flex flex-col gap-y-2">
           {users.map((user) => <UserCard user={user} />)}
         </div>
         {loadingUsers && <LoadingPost />}
-        {!endOfUsers && <h1 onClick={handleLoadMoreUsers} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more people</h1>}
+        {(!endOfUsers && !loadingUsers) && <h1 onClick={handleLoadMoreUsers} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more people</h1>}
       </section>
       <section className="space-y-3">
-        <div>
-          <h1 className="font-bold font-mono text-xl">Posts & Videos</h1>
-        </div>
+        {posts.length > 0 && <h1 className="font-bold font-mono text-xl">Posts & Videos:</h1>}
         <div className="flex flex-col gap-y-2">
           {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
             createdAt={item.createdAt} imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
             commentCount={item.commentCount} liked={item.liked} />)}
         </div>
         {loadingPosts && <LoadingPost />}
-        {!endOfPosts && <h1 onClick={handleLoadMorePosts} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more posts & videos</h1>}
+        {(!endOfPosts && !loadingPosts) && <h1 onClick={handleLoadMorePosts} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more posts & videos</h1>}
       </section>
     </div>
   )
