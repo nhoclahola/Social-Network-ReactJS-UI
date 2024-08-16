@@ -12,6 +12,9 @@ import { RootState } from "./redux/store";
 import { useAppDispatch } from "./redux/hook";
 import { getProfileAction } from "./redux/auth/auth.action";
 import Loading from "./pages/loading/Loading";
+import SockJS from "sockjs-client";
+import { API_BASE_URL } from "./config/api";
+import { setStompClientThunk } from "./redux/web_socket/webSocket.action";
 
 function App() {
   const auth = useSelector((store: RootState) => store.auth)
@@ -37,6 +40,14 @@ function App() {
     fetchProfile();
   }, [jwt]);
 
+
+  // Connect to web socket
+  useEffect(() => {
+    if (auth.user) {
+      dispatch(setStompClientThunk())
+    }
+  }, [auth.user]);
+
   return (
     <div>
       {/* <Routes>
@@ -50,7 +61,7 @@ function App() {
         </Route>
       </Routes> */}
       <Routes>
-        <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage auth={auth}/> : <Authentication />}></Route>
+        <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage auth={auth} /> : <Authentication />}></Route>
       </Routes>
     </div>
   );

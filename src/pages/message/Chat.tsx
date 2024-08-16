@@ -17,13 +17,12 @@ import { Link } from "react-router-dom";
 
 interface ChatProps {
   chat: ChatInterface | null;
-  stompClient: Stomp.Client | null;
   setChats: React.Dispatch<React.SetStateAction<ChatInterface[]>>;
 }
 
-const Chat = ({ chat, stompClient, setChats }: ChatProps) => {
+const Chat = ({ chat, setChats }: ChatProps) => {
   const auth = useAppSelector((store) => store.auth);
-
+  const stompClient = useAppSelector((store) => store.stompClient.data);
   const [messages, setMessages] = React.useState<MessageInterface[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -139,11 +138,10 @@ const Chat = ({ chat, stompClient, setChats }: ChatProps) => {
   React.useEffect(() => {
     let subscription: Stomp.Subscription | null = null;
     if (chat && stompClient && stompClient.connected) {
-      subscription = stompClient?.subscribe(`/user/${chat?.chatId}/private`, (message) => {
+      subscription = stompClient?.subscribe(`/user/${chat?.chatId}/chat/private`, (message) => {
         const newMessage: MessageInterface = JSON.parse(message.body);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setChats(prevChats => {
-          console.log(prevChats);
           // Remove the chat from the list
           const updatedChats = prevChats.filter(prevChat => prevChat.chatId !== chat.chatId);
           return [chat, ...updatedChats];

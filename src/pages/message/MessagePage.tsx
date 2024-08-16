@@ -11,9 +11,11 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAppSelector } from "../../redux/hook";
 
 
 const Message = () => {
+  const stompClient = useAppSelector((store) => store.stompClient.data);
   const [chats, setChats] = React.useState<ChatInterface[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
@@ -47,36 +49,44 @@ const Message = () => {
 
   const [selectedChat, setSelectedChat] = React.useState<ChatInterface | null>(null);
 
+  // Deprecated connect to web socket
   const socketRef = React.useRef<WebSocket | null>(null);
-  const [stompClient, setStompClient] = React.useState<Stomp.Client | null>(null);
+  // const [stompClient, setStompClient] = React.useState<Stomp.Client | null>(null);
+  // React.useEffect(() => {
+  //   setLoading(true);
+  //   const sock = new SockJS(API_BASE_URL + "/ws");
+  //   const client = Stomp.over(sock);
+  //   setStompClient(client);
+  //   socketRef.current = sock;
+  //   client.connect({}, () => {
+  //     console.log('Connected');
+  //     setLoading(false);
+  //     // Add other subscriptions if needed
+  //   }, (error) => {
+  //     console.error('Error:', error);
+  //     setLoading(false);
+  //   });
+  //   // Cleanup function to disconnect STOMP client when component unmounts
+  //   return () => {
+  //     if (stompClient) {
+  //       stompClient.disconnect(() => {
+  //         console.log('STOMP client disconnected');
+  //       });
+  //     }
+  //     // Close the SockJS connection
+  //     if (socketRef.current) {
+  //       socketRef.current.close();
+  //       console.log('SockJS connection closed');
+  //     }
+  //   };
+  // }, []);
+
   React.useEffect(() => {
-    setLoading(true);
-    const sock = new SockJS(API_BASE_URL + "/ws");
-    const client = Stomp.over(sock);
-    setStompClient(client);
-    socketRef.current = sock;
-    client.connect({}, () => {
-      console.log('Connected');
+    if (stompClient)
       setLoading(false);
-      // Add other subscriptions if needed
-    }, (error) => {
-      console.error('Error:', error);
-      setLoading(false);
-    });
-    // Cleanup function to disconnect STOMP client when component unmounts
-    return () => {
-      if (stompClient) {
-        stompClient.disconnect(() => {
-          console.log('STOMP client disconnected');
-        });
-      }
-      // Close the SockJS connection
-      if (socketRef.current) {
-        socketRef.current.close();
-        console.log('SockJS connection closed');
-      }
-    };
-  }, []);
+    else
+      setLoading(true);
+  }, [stompClient]);
 
   return (
     <Grid container>
@@ -110,7 +120,7 @@ const Message = () => {
       </Grid>
       <Grid item xs={8}>
         <div className="w-full">
-          <Chat stompClient={stompClient} chat={selectedChat} setChats={setChats} />
+          <Chat chat={selectedChat} setChats={setChats} />
         </div>
       </Grid>
       {openSearch && <SearchUserChatModal open={openSearch} handleClose={closeSearchChat} />}
