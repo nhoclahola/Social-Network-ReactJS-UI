@@ -6,8 +6,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { replace } from "formik";
+import Stomp from "stompjs";
+import { useAppSelector } from "../../redux/hook";
+import NotificationInterface from "../../utils/NotificationInterface";
+import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
 
 const Sidebar = () => {
+  const stompClient = useAppSelector((store) => store.stompClient.data);
   const navigate = useNavigate();
   const location = useLocation();
   const auth = useSelector((store: RootState) => store.auth)
@@ -40,6 +46,14 @@ const Sidebar = () => {
     window.location.reload();
   };
 
+  const sendMessageToServer = (message: string) => {
+    if (stompClient && stompClient.connected) {
+      stompClient.send(`/app/notification/${auth?.user.userId}`, {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+      }, message);
+    }
+  }
+
   return (
     <Card className="h-screen flex flex-col justify-between py-5">
       <div className="space-y-4 mx-2">
@@ -55,6 +69,7 @@ const Sidebar = () => {
                 <div onClick={() => handleNavigate(item)} className="flex items-center cursor-pointer space-x-3 hover:bg-slate-300 py-4 px-2 rounded-xl">
                   {item.icon}
                   <p className="text-xl">{item.title}</p>
+                  {item.title === "Notifications" && <div className="w-2 h-2 bg-red-600 rounded-full"></div> }
                 </div>
               )
             })
@@ -69,7 +84,7 @@ const Sidebar = () => {
               {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
             </Avatar>
             <div>
-              <h1 className="font-bold">{auth.user?.firstName + " " + auth.user?.lastName}</h1>
+              <h1 onClick={() => sendMessageToServer("send message")}  className="font-bold">{auth.user?.firstName + " " + auth.user?.lastName}</h1>
               <p className="opacity-70">@{auth.user?.username}</p>
             </div>
           </div>

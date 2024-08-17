@@ -33,7 +33,7 @@ export const navigationMenu: NavigationItem[] = [
     {
         title: "Notifications",
         icon: <NotificationsIcon />,
-        path: "/",
+        path: "/notifications",
     },
     {
         title: "Messages",

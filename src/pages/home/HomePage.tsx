@@ -18,6 +18,11 @@ import { Login } from "@mui/icons-material"
 import Message from "../message/MessagePage"
 import ScrollToTop from "./ScrollToTop"
 import Search from "../search/Search"
+import NotificationPage from "../notification/NotificationPage"
+import NotificationInterface from "../../utils/NotificationInterface"
+import axios from "axios"
+import Stomp from "stompjs";
+import { API_BASE_URL } from "../../config/api"
 
 interface HomePageProps {
   auth: any;
@@ -25,6 +30,52 @@ interface HomePageProps {
 
 const HomePage = ({ auth }: HomePageProps) => {
   const location = useLocation();
+
+  const stompClient = useAppSelector((store) => store.stompClient.data);
+
+  const [notifications, setNotifications] = React.useState<NotificationInterface[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = React.useState(true);
+  const [errorNotifications, setErrorNotifications] = React.useState(null);
+
+  React.useEffect(() => {
+    setLoadingNotifications(true);
+    axios.get(`/api/notifications/users/${auth.user.userId}`, {
+      params: {
+        index: 0,
+      },
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    }).then(response => {
+      setNotifications(response.data.result);
+      console.log(response.data.result);
+      setLoadingNotifications(false);
+    }).catch(error => {
+      setErrorNotifications(error);
+      setLoadingNotifications(false);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    let subscription: Stomp.Subscription | null = null;
+    if (stompClient && stompClient.connected) {
+      subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
+        const newMessage = message.body;
+        setNotifications((prev) => [JSON.parse(newMessage), ...prev]);
+      }, {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+      });
+    }
+    // Cleanup function to disconnect STOMP client when component unmounts
+    return () => {
+      if (subscription) {
+        subscription?.unsubscribe();
+      }
+    };
+  }, [stompClient]);
+
+  
   return (
     // <div className="mx-10">
     <Grid container spacing={0} className="h-full bg-slate-50">
@@ -39,6 +90,7 @@ const HomePage = ({ auth }: HomePageProps) => {
           <Route path="" element={<MiddlePart />} />
           <Route path="videos" element={<Video />} />
           <Route path="search" element={<Search />} />
+          <Route path="notifications" element={<NotificationPage notifications={notifications} setNotifications={setNotifications} loadingNotifications={loadingNotifications} />} />
           <Route path="messages" element={<Message />} />
           <Route path="profile/:userId/*" element={<Profile />}>
             {/* replace the current history, so it does not save /profile/:id in history */}
