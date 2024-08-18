@@ -12,7 +12,11 @@ import NotificationInterface from "../../utils/NotificationInterface";
 import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
 
-const Sidebar = () => {
+interface SidebarProps {
+  notReadNotificationCount: number;
+}
+
+const Sidebar = ({notReadNotificationCount}: SidebarProps) => {
   const stompClient = useAppSelector((store) => store.stompClient.data);
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,7 +73,7 @@ const Sidebar = () => {
                 <div onClick={() => handleNavigate(item)} className="flex items-center cursor-pointer space-x-3 hover:bg-slate-300 py-4 px-2 rounded-xl">
                   {item.icon}
                   <p className="text-xl">{item.title}</p>
-                  {item.title === "Notifications" && <div className="w-2 h-2 bg-red-600 rounded-full"></div> }
+                  {(item.title === "Notifications" && notReadNotificationCount > 0) && <div className="w-4 h-4 bg-red-600 rounded-full flex justify-center items-center "><span className="text-sm text-white">{notReadNotificationCount}</span></div> }
                 </div>
               )
             })

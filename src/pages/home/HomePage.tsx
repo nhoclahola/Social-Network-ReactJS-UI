@@ -31,15 +31,10 @@ interface HomePageProps {
 const HomePage = ({ auth }: HomePageProps) => {
   const location = useLocation();
 
-  const stompClient = useAppSelector((store) => store.stompClient.data);
-
-  const [notifications, setNotifications] = React.useState<NotificationInterface[]>([]);
-  const [loadingNotifications, setLoadingNotifications] = React.useState(true);
-  const [errorNotifications, setErrorNotifications] = React.useState(null);
+  const [notReadNotificationCount, setNotReadNotificationCount] = React.useState(0);
 
   React.useEffect(() => {
-    setLoadingNotifications(true);
-    axios.get(`/api/notifications/users/${auth.user.userId}`, {
+    axios.get(`/api/notifications/count_not_read`, {
       params: {
         index: 0,
       },
@@ -48,40 +43,39 @@ const HomePage = ({ auth }: HomePageProps) => {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
       }
     }).then(response => {
-      setNotifications(response.data.result);
-      console.log(response.data.result);
-      setLoadingNotifications(false);
+      setNotReadNotificationCount(response.data.result);
     }).catch(error => {
-      setErrorNotifications(error);
-      setLoadingNotifications(false);
+      console.error(error);
     });
   }, []);
 
-  React.useEffect(() => {
-    let subscription: Stomp.Subscription | null = null;
-    if (stompClient && stompClient.connected) {
-      subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
-        const newMessage = message.body;
-        setNotifications((prev) => [JSON.parse(newMessage), ...prev]);
-      }, {
-        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-      });
-    }
-    // Cleanup function to disconnect STOMP client when component unmounts
-    return () => {
-      if (subscription) {
-        subscription?.unsubscribe();
-      }
-    };
-  }, [stompClient]);
+  const stompClient = useAppSelector((store) => store.stompClient.data);
 
-  
+  // React.useEffect(() => {
+  //   let subscription: Stomp.Subscription | null = null;
+  //   if (stompClient && stompClient.connected) {
+  //     subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
+  //       const newMessage = message.body;
+  //       setNotifications((prev) => [JSON.parse(newMessage), ...prev]);
+  //     }, {
+  //       "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+  //     });
+  //   }
+  //   // Cleanup function to disconnect STOMP client when component unmounts
+  //   return () => {
+  //     if (subscription) {
+  //       subscription?.unsubscribe();
+  //     }
+  //   };
+  // }, [stompClient]);
+
+
   return (
     // <div className="mx-10">
     <Grid container spacing={0} className="h-full bg-slate-50">
       <Grid item xs={0} sx={{ display: { xs: 'none', md: 'block' } }} md={3}>
         <div className="sticky top-0">
-          <Sidebar></Sidebar>
+          <Sidebar notReadNotificationCount={notReadNotificationCount} ></Sidebar>
         </div>
       </Grid>
 
@@ -90,7 +84,7 @@ const HomePage = ({ auth }: HomePageProps) => {
           <Route path="" element={<MiddlePart />} />
           <Route path="videos" element={<Video />} />
           <Route path="search" element={<Search />} />
-          <Route path="notifications" element={<NotificationPage notifications={notifications} setNotifications={setNotifications} loadingNotifications={loadingNotifications} />} />
+          <Route path="notifications" element={<NotificationPage />} />
           <Route path="messages" element={<Message />} />
           <Route path="profile/:userId/*" element={<Profile />}>
             {/* replace the current history, so it does not save /profile/:id in history */}

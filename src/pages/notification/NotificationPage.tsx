@@ -2,6 +2,9 @@ import React from 'react'
 import Notification from "./Notification"
 import { Box, Tab, Tabs } from "@mui/material"
 import NotificationInterface from "../../utils/NotificationInterface"
+import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
+import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 
 interface NotificationProps {
   notifications: NotificationInterface[];
@@ -9,7 +12,31 @@ interface NotificationProps {
   loadingNotifications: boolean;
 }
 
-const NotificationPage = ({notifications, setNotifications, loadingNotifications}: NotificationProps) => {
+const NotificationPage = () => {
+  const [notifications, setNotifications] = React.useState<NotificationInterface[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = React.useState(true);
+  const [errorNotifications, setErrorNotifications] = React.useState(null);
+
+  React.useEffect(() => {
+    setLoadingNotifications(true);
+    axios.get(`/api/notifications/users`, {
+      params: {
+        index: 0,
+      },
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    }).then(response => {
+      setNotifications(response.data.result);
+      console.log(response.data.result);
+      setLoadingNotifications(false);
+    }).catch(error => {
+      setErrorNotifications(error);
+      setLoadingNotifications(false);
+    });
+  }, []);
+  
   return (
     <div className="w-full mx-5">
       <h1 className="font-bold font-serif text-xl mt-2 mb-5">Notifications</h1>
@@ -25,7 +52,7 @@ const NotificationPage = ({notifications, setNotifications, loadingNotifications
           })
         }
       </div>
-      
+      {/* <LoadingPost /> */}
       <h1 className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more notifications</h1>
     </div>
   )
