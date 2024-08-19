@@ -5,7 +5,11 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import User from "../../utils/UserInterface";
 import { Link } from "react-router-dom";
 
-const PopularUserCard = (user: User) => {
+interface PopularUserCardProps {
+  user: User
+};
+
+const PopularUserCard = ({user}: PopularUserCardProps) => {
   return (
     <Link to={`/profile/${user.userId}`} className="border border-blue-200 rounded-full px-2 flex gap-x-4 items-center py-2">
       <Avatar>

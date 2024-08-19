@@ -4,7 +4,11 @@ import User from "../../utils/UserInterface"
 import { Link } from "react-router-dom"
 import truncateUsername from "../../utils/TruncateName"
 
-const LatestActivityFollowings = (user: User) => {
+interface LastestActivityFollowingsProps {
+	user: User
+};
+
+const LatestActivityFollowings = ({user}: LastestActivityFollowingsProps) => {
 	return (
 		<Link to={`/profile/${user.userId}`} className="flex flex-col items-center">
 			<Avatar className="outline outline-2 outline-slate-300" sx={{ width: "4rem", height: "4rem" }}>

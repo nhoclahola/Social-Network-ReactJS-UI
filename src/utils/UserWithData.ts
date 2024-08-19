@@ -4,10 +4,10 @@ export default interface UserWithDataInterface {
   lastName: string;
   username: string;
   email: string;
-  description: string;
-  gender: string;
-  avatarUrl: string;
-  coverPhotoUrl: string;
+  description: string | null;
+  gender: boolean | null;
+  avatarUrl: string | null;
+  coverPhotoUrl: string | null;
   posts: number;
   followers: number;
   followings: number;

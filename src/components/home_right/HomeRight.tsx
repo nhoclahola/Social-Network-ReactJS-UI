@@ -39,9 +39,7 @@ const HomeRight = () => {
           <p className="text-xs font-semibold opacity-95">View all</p>
         </div>
         <div className="space-y-5">
-          {loading ? <LoadingPost /> : users.map((item) => <PopularUserCard key={item.userId} avatarUrl={item.avatarUrl}
-            coverPhotoUrl={item.coverPhotoUrl} email={item.email} firstName={item.firstName}
-            lastName={item.lastName} gender={item.gender} username={item.username} userId={item.userId} ></PopularUserCard>)}
+          {loading ? <LoadingPost /> : users.map((item) => <PopularUserCard key={item.userId} user={item} ></PopularUserCard>)}
         </div>
       </Card>
     </div>

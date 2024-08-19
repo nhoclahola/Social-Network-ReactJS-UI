@@ -122,9 +122,7 @@ const MiddlePart = () => {
       <Card className="flex items-center space-x-4 p-5 rounded-b-md">
         {
           loadingLatestActivityFollowingsUsers ? <LoadingPost /> :
-            latestActivityFollowingsUsers.map((item) => <LatestActivityFollowings key={item.userId} avatarUrl={item.avatarUrl}
-              coverPhotoUrl={item.coverPhotoUrl} email={item.email} firstName={item.firstName}
-              lastName={item.lastName} gender={item.gender} username={item.username} userId={item.userId} ></LatestActivityFollowings>)
+            latestActivityFollowingsUsers.map((item) => <LatestActivityFollowings key={item.userId} user={item} ></LatestActivityFollowings>)
         }
       </Card>
       <Card className="p-4">
