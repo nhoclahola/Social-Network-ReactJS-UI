@@ -245,8 +245,12 @@ const Chat = ({ chat, setChats }: ChatProps) => {
         {messages.map((message, index) => {
           const isSender = message?.user?.userId === auth.user?.userId;
           const showAvatar = !isSender && (index === 0 || messages[index - 1].user.userId !== message.user.userId);
+          const previousMessage = index > 0 ? messages[index - 1] : null;
+          const showTimestamp = previousMessage
+            ? new Date(message.timestamp).getTime() - new Date(previousMessage.timestamp).getTime() > 4 * 60 * 60 * 1000
+            : true; // Hiển thị timestamp nếu là tin nhắn đầu tiên
           return (
-            <Message key={message.messageId} message={message} isSender={isSender} showAvatar={showAvatar} ></Message>
+            <Message key={message.messageId} message={message} isSender={isSender} showAvatar={showAvatar} showTimestamp={showTimestamp}></Message>
           )
         })}
         <div ref={messagesEndRef} />
