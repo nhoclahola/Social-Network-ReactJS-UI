@@ -8,9 +8,10 @@ import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 
 interface NotificationProps {
   setNotReadNotificationCount: React.Dispatch<React.SetStateAction<number>>;
+  newNotification: NotificationInterface | null;
 }
 
-const NotificationPage = ({setNotReadNotificationCount}: NotificationProps) => {
+const NotificationPage = ({setNotReadNotificationCount, newNotification}: NotificationProps) => {
   const [notifications, setNotifications] = React.useState<NotificationInterface[]>([]);
   const [loadingNotifications, setLoadingNotifications] = React.useState(true);
   const [errorNotifications, setErrorNotifications] = React.useState(null);
@@ -44,6 +45,14 @@ const NotificationPage = ({setNotReadNotificationCount}: NotificationProps) => {
       setLoadingNotifications(false);
     });
   }, [index]);
+
+  React.useEffect(() => {
+    if (newNotification) {
+      setNotifications((prev) => {
+        return [newNotification, ...prev];
+      })
+    }
+  }, [newNotification])
 
   const handleLoadMore = () => {
     if (!endOfNotifications)
