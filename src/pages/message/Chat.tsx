@@ -251,9 +251,6 @@ const Chat = ({ chat, setChats }: ChatProps) => {
         })}
         <div ref={messagesEndRef} />
       </div>
-      {/* <div className="h-[10vh] ">
-        <input className="w-full p-4" placeholder="Type a message"></input>
-      </div> */}
       <div className="relative w-full">
         <textarea ref={inputRef} onKeyDown={handleKeyDown} rows={1} placeholder="Type a message" title="message"
           className="w-full resize-none outline-none bg-transparent border border-[#3b4054] rounded-lg px-5 py-2" />

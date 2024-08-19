@@ -40,15 +40,15 @@ export const navigationMenu: NavigationItem[] = [
         icon: <MessageIcon />,
         path: "/messages",
     },
-    {
-        title: "List",
-        icon: <ListAltIcon />,
-        path: "/",
-    },
+    // {
+    //     title: "List",
+    //     icon: <ListAltIcon />,
+    //     path: "/",
+    // },
     {
         title: "Communities",
         icon: <GroupIcon />,
-        path: "/",
+        path: "/communities",
     },
     {
         title: "Profile",

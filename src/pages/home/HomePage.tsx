@@ -51,23 +51,23 @@ const HomePage = ({ auth }: HomePageProps) => {
 
   const stompClient = useAppSelector((store) => store.stompClient.data);
 
-  // React.useEffect(() => {
-  //   let subscription: Stomp.Subscription | null = null;
-  //   if (stompClient && stompClient.connected) {
-  //     subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
-  //       const newMessage = message.body;
-  //       setNotifications((prev) => [JSON.parse(newMessage), ...prev]);
-  //     }, {
-  //       "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-  //     });
-  //   }
-  //   // Cleanup function to disconnect STOMP client when component unmounts
-  //   return () => {
-  //     if (subscription) {
-  //       subscription?.unsubscribe();
-  //     }
-  //   };
-  // }, [stompClient]);
+  React.useEffect(() => {
+    let subscription: Stomp.Subscription | null = null;
+    if (stompClient && stompClient.connected) {
+      subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
+        const newMessage = message.body;
+        setNotReadNotificationCount((prev) => prev + 1);
+      }, {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+      });
+    }
+    // Cleanup function to disconnect STOMP client when component unmounts
+    return () => {
+      if (subscription) {
+        subscription?.unsubscribe();
+      }
+    };
+  }, [stompClient]);
 
 
   return (
@@ -75,7 +75,7 @@ const HomePage = ({ auth }: HomePageProps) => {
     <Grid container spacing={0} className="h-full bg-slate-50">
       <Grid item xs={0} sx={{ display: { xs: 'none', md: 'block' } }} md={3}>
         <div className="sticky top-0">
-          <Sidebar notReadNotificationCount={notReadNotificationCount} ></Sidebar>
+          <Sidebar notReadNotificationCount={notReadNotificationCount}></Sidebar>
         </div>
       </Grid>
 
@@ -84,7 +84,7 @@ const HomePage = ({ auth }: HomePageProps) => {
           <Route path="" element={<MiddlePart />} />
           <Route path="videos" element={<Video />} />
           <Route path="search" element={<Search />} />
-          <Route path="notifications" element={<NotificationPage />} />
+          <Route path="notifications" element={<NotificationPage setNotReadNotificationCount={setNotReadNotificationCount} />} />
           <Route path="messages" element={<Message />} />
           <Route path="profile/:userId/*" element={<Profile />}>
             {/* replace the current history, so it does not save /profile/:id in history */}

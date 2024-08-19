@@ -27,7 +27,7 @@ const UserChat = ({chat, selectedChat, setSelectedChat}: UserChatProps) => {
         </Avatar>
         <div>
           <h1 className="font-bold text-lg">{truncateUsername(user?.firstName + " " + user?.lastName, 20)}</h1>
-          <p>hello</p>
+          <p>@{truncateUsername(user?.username + " ", 20)}</p>
         </div>
       </div>
     </div>

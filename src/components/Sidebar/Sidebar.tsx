@@ -66,14 +66,14 @@ const Sidebar = ({notReadNotificationCount}: SidebarProps) => {
             <span className="font-bold text-xl ml-2">Y.COM</span>
           </Link>
         </div>
-        <div className="">
+        <div className="space-y-2">
           {
-            navigationMenu.map((item) => {
+            navigationMenu.map((item, index) => {
               return (
-                <div onClick={() => handleNavigate(item)} className="flex items-center cursor-pointer space-x-3 hover:bg-slate-300 py-4 px-2 rounded-xl">
+                <div key={index} onClick={() => handleNavigate(item)} className={`flex items-center cursor-pointer space-x-3 ${location.pathname !== item.path && "hover:bg-slate-300"} py-4 px-2 rounded-xl ${location.pathname === item.path && "bg-cyan-500"}`}>
                   {item.icon}
                   <p className="text-xl">{item.title}</p>
-                  {(item.title === "Notifications" && notReadNotificationCount > 0) && <div className="w-4 h-4 bg-red-600 rounded-full flex justify-center items-center "><span className="text-sm text-white">{notReadNotificationCount}</span></div> }
+                  {(item.title === "Notifications" && notReadNotificationCount > 0) && <div className="bg-red-600 rounded-full flex justify-center items-center "><span className="text-sm text-white px-1">{notReadNotificationCount}</span></div> }
                 </div>
               )
             })

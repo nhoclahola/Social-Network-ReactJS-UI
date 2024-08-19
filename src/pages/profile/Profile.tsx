@@ -146,7 +146,7 @@ const Profile = () => {
             {/* <Outlet /> */}
             <Routes>
               <Route path="posts" element={<ProfilePosts userId={userId} />} />
-              <Route path="videos" element={<ProfileVideos />} />
+              <Route path="videos" element={<ProfileVideos userId={userId} />} />
               <Route path="saved" element={<ProfileSavedPosts />} />
               <Route path="reposts" element={<ProfileReposts />} />
               <Route index path="*" element={<Navigate to="posts" replace />} />
