@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
 import React from 'react'
-import { Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfilePosts from "./ProfilePosts";
 import ProfileVideos from "./ProfileVideos";
 import ProfileSavedPosts from "./ProfileSavedPosts";
@@ -119,11 +119,15 @@ const Profile = () => {
           </div>
           <div className="flex gap-2 items-center py-3">
             <span>{user?.posts} Posts</span>
-            <span>{followerCount} Followers</span>
-            <span>{user?.followings} Followings</span>
+            <Link to={`/profile/${user.userId}/followers`}>
+              <span className="font-bold hover:underline">{followerCount} Followers</span>
+            </Link>
+            <Link to={`/profile/${user.userId}/following`}>
+              <span className="font-bold hover:underline">{user?.followings} Followings</span>
+            </Link>
           </div>
           <div>
-            <p>{user.description}</p>
+            <p>{user?.description}</p>
           </div>
         </section>
       }

@@ -23,6 +23,8 @@ import NotificationInterface from "../../utils/NotificationInterface"
 import axios from "axios"
 import Stomp from "stompjs";
 import { API_BASE_URL } from "../../config/api"
+import UserFollowing from "../profile/UserFollowing"
+import UserFollowers from "../profile/UserFollowers"
 
 interface HomePageProps {
   auth: any;
@@ -32,6 +34,7 @@ const HomePage = ({ auth }: HomePageProps) => {
   const location = useLocation();
 
   const [notReadNotificationCount, setNotReadNotificationCount] = React.useState(0);
+  const [newNotification, setNewNotification] = React.useState<NotificationInterface | null>(null);
 
   React.useEffect(() => {
     axios.get(`/api/notifications/count_not_read`, {
@@ -57,6 +60,7 @@ const HomePage = ({ auth }: HomePageProps) => {
       subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
         const newMessage = message.body;
         setNotReadNotificationCount((prev) => prev + 1);
+        setNewNotification(JSON.parse(newMessage));
       }, {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`
       });
@@ -84,12 +88,15 @@ const HomePage = ({ auth }: HomePageProps) => {
           <Route path="" element={<MiddlePart />} />
           <Route path="videos" element={<Video />} />
           <Route path="search" element={<Search />} />
-          <Route path="notifications" element={<NotificationPage setNotReadNotificationCount={setNotReadNotificationCount} />} />
+          <Route path="notifications" element={<NotificationPage setNotReadNotificationCount={setNotReadNotificationCount} newNotification={newNotification} />} />
           <Route path="messages" element={<Message />} />
           <Route path="profile/:userId/*" element={<Profile />}>
             {/* replace the current history, so it does not save /profile/:id in history */}
             {/* <Route index path="*" element={<Navigate to="posts" replace/>}/>  */}
           </Route>
+          <Route path="profile/:userId/following" element={<UserFollowing />} />
+          <Route path="profile/:userId/followers" element={<UserFollowers />} />
+
           <Route path="*" element={auth.user ? <Navigate to="" replace /> : <Navigate to="/login" replace />} />
         </Routes>
       </Grid>

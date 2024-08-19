@@ -50,14 +50,6 @@ const Sidebar = ({notReadNotificationCount}: SidebarProps) => {
     window.location.reload();
   };
 
-  const sendMessageToServer = (message: string) => {
-    if (stompClient && stompClient.connected) {
-      stompClient.send(`/app/notification/${auth?.user.userId}`, {
-        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-      }, message);
-    }
-  }
-
   return (
     <Card className="h-screen flex flex-col justify-between py-5">
       <div className="space-y-4 mx-2">
@@ -88,7 +80,7 @@ const Sidebar = ({notReadNotificationCount}: SidebarProps) => {
               {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
             </Avatar>
             <div>
-              <h1 onClick={() => sendMessageToServer("send message")}  className="font-bold">{auth.user?.firstName + " " + auth.user?.lastName}</h1>
+              <h1 className="font-bold">{auth.user?.firstName + " " + auth.user?.lastName}</h1>
               <p className="opacity-70">@{auth.user?.username}</p>
             </div>
           </div>
@@ -111,7 +103,7 @@ const Sidebar = ({notReadNotificationCount}: SidebarProps) => {
               'aria-labelledby': 'basic-button',
             }}
             >
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Log out</MenuItem>
             </Menu>
           </div>
         </div>
