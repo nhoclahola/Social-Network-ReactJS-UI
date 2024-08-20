@@ -1,13 +1,13 @@
-import { Avatar, Divider } from "@mui/material"
+import { Avatar, Divider, useTheme } from "@mui/material"
 import React from 'react'
 import User from "../../utils/UserInterface";
 import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
 import { Link, useParams } from "react-router-dom";
 
-
 const UserFollowing = () => {
   const { userId } = useParams();
+  const theme = useTheme();
   const [user, setUser] = React.useState<User | null>(null); 
   const [users, setUsers] = React.useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = React.useState(true);
@@ -72,7 +72,7 @@ const UserFollowing = () => {
       <div className="flex flex-col gap-y-4">
         {users.map((user, index) =>
         <Link to={`/profile/${user.userId}`}>
-          <div className="flex gap-x-2 shadow p-2 bg-white hover:bg-transparent">
+          <div style={{backgroundColor: theme.palette.background.paper}} className="flex gap-x-2 shadow p-2 hover:bg-transparent">
             <Avatar>
               {user?.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
             </Avatar>
