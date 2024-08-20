@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import Sidebar from "../../components/sidebar/Sidebar"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import MiddlePart from "../../components/middle/MiddlePart"
-import Video from "../video/Video"
+import Video from "../video/VideoPage"
 import Profile from "../profile/Profile"
 import HomeRight from "../../components/home_right/HomeRight"
 import ProfilePosts from "../profile/ProfilePosts"
@@ -17,7 +17,7 @@ import { RootState } from "../../redux/store"
 import { Login } from "@mui/icons-material"
 import Message from "../message/MessagePage"
 import ScrollToTop from "./ScrollToTop"
-import Search from "../search/Search"
+import Search from "../search/SearchPage"
 import NotificationPage from "../notification/NotificationPage"
 import NotificationInterface from "../../utils/NotificationInterface"
 import axios from "axios"
@@ -77,7 +77,7 @@ const HomePage = ({ auth }: HomePageProps) => {
 
   return (
     // <div className="mx-10">
-    <Grid container spacing={0} className="h-full bg-slate-50">
+    <Grid container spacing={0} className="h-full">
       <Grid item xs={0} sx={{ display: { xs: 'none', md: 'block' } }} md={3}>
         <div className="sticky top-0">
           <Sidebar notReadNotificationCount={notReadNotificationCount}></Sidebar>

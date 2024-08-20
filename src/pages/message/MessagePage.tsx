@@ -1,4 +1,4 @@
-import { Avatar, Divider, Grid } from "@mui/material"
+import { Avatar, Divider, Grid, useTheme } from "@mui/material"
 import React from 'react'
 import MailIcon from '@mui/icons-material/Mail';
 import UserChat from "./UserChat";
@@ -16,6 +16,7 @@ import { useAppSelector } from "../../redux/hook";
 
 const Message = () => {
   const stompClient = useAppSelector((store) => store.stompClient.data);
+  const theme = useTheme();
   const [chats, setChats] = React.useState<ChatInterface[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
@@ -91,7 +92,9 @@ const Message = () => {
   return (
     <Grid container>
       <Grid item xs={4}>
-        <div className="h-[10vh] font-bold text-xl flex justify-between items-center px-2 bg-slate-200" >
+        <div
+        style={{ backgroundColor: theme.palette.primary.main }}
+         className="h-[10vh] font-bold text-xl flex justify-between items-center px-2" >
           <h1>Messages</h1>
           <MailIcon onClick={openSearchChat} className="cursor-pointer"></MailIcon>
         </div>

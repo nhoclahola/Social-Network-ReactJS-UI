@@ -4,16 +4,18 @@ import React, { useState } from "react"
 import { useDispatch } from "react-redux";
 import * as Yup from "yup"
 import { loginThunk, loginUser } from "../../redux/auth/auth.action";
-import { useAppDispatch } from "../../redux/hook";
+import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import { Link } from "react-router-dom";
+import { RootState } from "../../redux/store";
 
 const initialValues = { email: "", password: "" };
 const validationSchema = {
   email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required")
+  password: Yup.string().min(3, "Password must be at least 3 characters").required("Password is required")
 };
 
 const Login = () => {
+  const loginError = useAppSelector((state: RootState) => state.auth.error);
   const [formValue, setFormValue] = useState([]);
   const dispatch = useAppDispatch();
   const handleSubmit = (values: FormikValues) => {
@@ -23,7 +25,7 @@ const Login = () => {
   return (
     <div>
       <Formik 
-        // validationSchema={validationSchema} 
+        validationSchema={Yup.object(validationSchema)} 
         initialValues={initialValues} 
         onSubmit={handleSubmit}>
         <Form className="space-y-5">
@@ -45,6 +47,7 @@ const Login = () => {
             type="submit">Login</Button>
         </Form>
       </Formik>
+      {loginError && <div className="text-red-600 text-center">Your email or password does not match.</div>}
       <div className="flex gap-5 mt-5 items-center">
         <h2 className="">If you don't have account?</h2>
         <Link to={"/register"} replace>

@@ -9,7 +9,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingPost from "../../components/middle/loading_post/LoadingPost";
-import { IconButton } from "@mui/material";
+import { IconButton, useTheme } from "@mui/material";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -18,7 +18,8 @@ function useQuery() {
 const Search = () => {
   const navigate = useNavigate();
   const query = useQuery();
-  const searchTerm = query.get('query'); // Truy cập giá trị của query
+  const searchTerm = query.get("query"); // Get the query from the URL
+  const theme = useTheme();
 
   const [inputSearch, setInputSearch] = React.useState<string>(searchTerm ?? "");
   const onChangeInputSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +163,11 @@ const Search = () => {
         <div className="relative">
           <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
+            style={{
+              borderColor: theme.palette.primary.main,
+              color: theme.palette.text.primary,
+              backgroundColor: theme.palette.background.paper,
+            }}
             value={inputSearch}
             onChange={onChangeInputSearch}
             ref={inputRef}

@@ -5,11 +5,12 @@ import User from "../../utils/UserInterface";
 import lodash from "lodash";
 import truncateUsername from "../../utils/TruncateName";
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Divider } from "@mui/material";
+import { Avatar, Divider, useTheme } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
 const SearchUser = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [users, setUsers] = React.useState<User[]>([]);
   const [openSearch, setOpenSearch] = React.useState<boolean>(false);
@@ -67,7 +68,13 @@ const SearchUser = () => {
 
   return (
     <div className="relative z-[1]">
-      <input ref={inputRef} onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
+      <input 
+      style={{
+        borderColor: theme.palette.primary.main,
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.background.paper,
+      }}
+      ref={inputRef} onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px] focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" placeholder="Search" >
       </input>
       {openSearch && <section ref={searchSectionRef} className="border absolute w-full bg-white whitespace-nowrap shadow-xl rounded-xl">
         <div className="mt-1"></div>

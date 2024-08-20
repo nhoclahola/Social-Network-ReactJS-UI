@@ -15,6 +15,20 @@ import Loading from "./pages/loading/Loading";
 import SockJS from "sockjs-client";
 import { API_BASE_URL } from "./config/api";
 import { setStompClientThunk } from "./redux/web_socket/webSocket.action";
+import { CssBaseline, GlobalStyles, ThemeProvider } from "@mui/material";
+import { dark } from "./theme/dark";
+import { light } from "./theme/light";
+
+const getThemeByName = (theme: string) => {
+  return themeMap[theme];
+}
+
+const themeMap: { [key: string]: any } = {
+  light,
+  dark
+};
+
+export const ThemeContext = React.createContext(getThemeByName('darkTheme'));
 
 function App() {
   const auth = useSelector((store: RootState) => store.auth)
@@ -48,9 +62,36 @@ function App() {
     }
   }, [auth.user]);
 
+  useEffect(() => {
+    const handleStorageEvent = (event: StorageEvent) => {
+      if (event.key === "isLoggedOut") {
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageEvent);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener("storage", handleStorageEvent);
+    };
+  }, []);
+
+  const [themeName, setThemeName] = useState(localStorage.getItem("theme") || "dark");
+  const theme = getThemeByName(themeName);
+
+  // Check if the theme is saved in local storage or not, if not, save it with default value "dark"
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+      localStorage.setItem("theme", "dark");
+    }
+  }, []);
+
   return (
-    <div>
-      {/* <Routes>
+    <ThemeContext.Provider value={setThemeName}>
+      <ThemeProvider theme={theme}>
+        {/* <Routes>
         <Route path="/*" element={auth.user ? <HomePage /> : <Authentication/>} />
         <Route path="/message" element={<Message/>} />
         <Route element={<Authentication/>}>
@@ -60,10 +101,35 @@ function App() {
           <Route path="register" element={<Register />} />
         </Route>
       </Routes> */}
-      <Routes>
-        <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage auth={auth} /> : <Authentication />}></Route>
-      </Routes>
-    </div>
+        <CssBaseline />
+        <GlobalStyles
+          styles={(theme) => ({
+            '*': {
+              scrollbarWidth: 'medium',
+              scrollbarColor:
+                theme.palette.mode === 'light'
+                  ? '#cccccc #ffffff' // Light mode: thumb light, track white
+                  : '#6b6b6b #121212', // Dark mode: thumb gray, track black
+            },
+            '*::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '*::-webkit-scrollbar-thumb': {
+              backgroundColor:
+                theme.palette.mode === 'light' ? '#cccccc' : '#6b6b6b', // Thumb light/dark based on mode
+              borderRadius: '10px',
+            },
+            '*::-webkit-scrollbar-track': {
+              backgroundColor:
+                theme.palette.mode === 'light' ? '#ffffff' : '#121212', // Track light/dark based on mode
+            },
+          })}
+        />
+        <Routes>
+          <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage auth={auth} /> : <Authentication />}></Route>
+        </Routes>
+      </ThemeProvider>
+    </ThemeContext.Provider>
   );
 }
 

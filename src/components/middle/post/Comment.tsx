@@ -1,4 +1,4 @@
-import { Avatar } from "@mui/material"
+import { Avatar, useTheme } from "@mui/material"
 import React from 'react'
 import formatDateFromString from "../../../utils/ConvertDate";
 import User from "../../../utils/UserInterface";
@@ -13,6 +13,7 @@ export interface CommentProps {
 };
 
 const Comment = ({ comment }: CommentProps) => {
+  const theme = useTheme()
   const [likedCount, setLikedCount] = React.useState(comment.likedCount ? comment.likedCount : 0);
   const [isLiked, setIsLiked] = React.useState(comment.liked ? comment.liked : false);
 
@@ -43,7 +44,7 @@ const Comment = ({ comment }: CommentProps) => {
         </Avatar>
       </Link>
       <div>
-        <div className="w-full rounded-xl border px-4 py-2 bg-slate-300">
+        <div style={{background: theme.palette.background.paper}} className="w-full rounded-xl border px-4 py-2 ">
           <Link to={`/profile/${comment.user.userId}`}>
             <h3 className="font-semibold text-sm">{comment.user.firstName} {comment.user.lastName}</h3>
           </Link>

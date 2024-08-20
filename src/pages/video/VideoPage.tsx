@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../../config/api";
 import { set } from "lodash";
 import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 import EndOfVideo from "./EndOfVideo";
+import { useTheme } from "@mui/material";
 
 const Video = () => {
   const [index, setIndex] = React.useState(0);
@@ -78,9 +79,10 @@ const Video = () => {
     setResetKey((prev) => prev + 1);
   };
 
+  const theme = useTheme();
   return (
-    <div className="w-full bg-slate-50 px-5">
-      <div className="flex justify-center font-bold text-2xl my-8 sticky top-0 z-10 bg-slate-50">
+    <div className="w-full px-5">
+      <div style={{backgroundColor: theme.palette.background.default}} className="flex justify-center font-bold text-2xl my-8 sticky top-0 z-10">
         <div onClick={handleScrollToTop} className="flex flex-col justify-center items-center cursor-pointer">
           <h1>Popular videos</h1>
           <OndemandVideoIcon />

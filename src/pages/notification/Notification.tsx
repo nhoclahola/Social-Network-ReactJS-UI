@@ -1,4 +1,4 @@
-import { Avatar, IconButton, Tooltip } from "@mui/material"
+import { Avatar, IconButton, Tooltip, useTheme } from "@mui/material"
 import React from 'react'
 import NotificationInterface from "../../utils/NotificationInterface"
 import formatDateFromString from "../../utils/ConvertDate";
@@ -14,6 +14,7 @@ interface NotificationProps {
 };
 
 const Notification = ({ notification, setNotifications, setNotReadNotificationCount }: NotificationProps) => {
+  const theme = useTheme();
   const markNotificationAsRead = () => {
     axios.put(`/api/notifications/${notification.notificationId}/read`, {}, {
       baseURL: API_BASE_URL,
@@ -35,7 +36,7 @@ const Notification = ({ notification, setNotifications, setNotReadNotificationCo
     });
   }
   return (
-    <div className="flex items-center w-full justify-between bg-white hover:bg-transparent cursor-pointer shadow p-2">
+    <div style={{background: theme.palette.background.paper}} className="flex items-center w-full justify-between hover:bg-transparent cursor-pointer shadow p-2">
       <div className="flex items-center gap-x-2">
         {!notification.read ? <div className="w-2 h-2 bg-cyan-500 rounded-full"></div> : <div className="w-2 h-2"></div>}
         <Avatar sx={{ width: "3rem", height: "3rem" }}>

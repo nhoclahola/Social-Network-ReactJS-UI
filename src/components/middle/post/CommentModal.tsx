@@ -157,7 +157,7 @@ const CommentModal = ({ open, handleClose, postId, likedCount, commentCount, set
               {data.length === 0 && <Typography className="text-center py-8">No comments</Typography>}
             </div>
             <Divider />
-            <section className="h-20 flex items-center gap-x-5 mx-3">
+            <section className="h-20 flex items-center gap-x-5 mx-3 mt-2">
               <Avatar>
                 {auth?.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
               </Avatar>

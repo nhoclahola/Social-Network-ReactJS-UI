@@ -179,7 +179,7 @@ const CreatePostModal = ({ open, handleClose, addPost }: CreatePostModalProps) =
                 </div>
               </div>
               <div>
-                <textarea className="w-full p-4 resize-none border border-black rounded-lg bg-transparent" name="caption" value={formik.values.caption}
+                <textarea className="w-full p-4 resize-none border rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" name="caption" value={formik.values.caption}
                   onChange={formik.handleChange}
                   placeholder="Caption..." rows={4} />
                 {error && <Typography color="error">Error: {error?.message}</Typography>}

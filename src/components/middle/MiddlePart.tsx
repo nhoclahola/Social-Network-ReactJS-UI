@@ -127,13 +127,13 @@ const MiddlePart = () => {
       </Card>
       <Card className="p-4">
         <div className="flex justify-between items-center">
-          <Avatar className="mr-6">
+          <Avatar className="mr-6 outline outline-2 outline-slate-300">
             {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
           </Avatar>
           <input
             onClick={handleOpen}
             readOnly
-            className="w-[90%] bg-transparent rounded-full p-5 border-[#3b4054] border hover:bg-slate-600 cursor-pointer"
+            className="w-[90%] bg-transparent rounded-full p-5 border hover:outline-none hover:ring-2 hover:ring-blue-500 cursor-pointer"
             type="text"
             placeholder="What are you thinking?"></input>
         </div>

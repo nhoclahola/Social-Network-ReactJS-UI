@@ -18,6 +18,7 @@ import { preProcessFile } from "typescript";
 import User from "../../../utils/UserInterface";
 import { Link, useNavigate } from "react-router-dom";
 import formatDateFromString from "../../../utils/ConvertDate";
+import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 
 interface PostCardProps {
 	postId: string;
@@ -46,8 +47,7 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 
 	const [isLiked, setIsLiked] = React.useState(liked ? liked : false);
 
-	const likePost = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.stopPropagation();
+	const likePost = () => {
 		axios.put(`/api/posts/${postId}/like`, {}, {
 			baseURL: API_BASE_URL,
 			headers: {
@@ -67,13 +67,8 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 		});
 	}
 
-	const navigate = useNavigate();
-	const navigateToPostPage = () => {
-		navigate(`/post/${postId}`);
-	}
-
 	return (
-		<Card onClick={navigateToPostPage} className="flex p-2 cursor-pointer">
+		<Card className="flex p-2">
 			<div>
 				<Link to={`/profile/${user.userId}`}>
 					<Avatar onDragStart={stopDragging} className="outline outline-2 outline-slate-300" sx={{ width: "2.5rem", height: "2.5rem", margin: "0.5rem" }} aria-label="recipe">
@@ -82,13 +77,18 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 				</Link>
 			</div>
 			<div className="flex flex-col gap-y-2 w-full">
-				<div className="space-x-2">
-					<Link to={`/profile/${user.userId}`}>
-						<span className="font-bold">{user.firstName} {user.lastName}</span>
+				<div className="space-x-2 w-full flex justify-between">
+					<div className="space-x-2">
+						<Link to={`/profile/${user.userId}`}>
+							<span className="font-bold">{user.firstName} {user.lastName}</span>
+						</Link>
+						<span className="text-gray-500 text-sm">@{user.username}</span>
+						<span>·</span>
+						<span className="text-gray-500 text-sm">{formatDateFromString(createdAt)}</span>
+					</div>
+					<Link to={`/post/${postId}`}>
+					<SubdirectoryArrowRightIcon className="hover:text-cyan-400" />
 					</Link>
-					<span className="text-gray-500 text-sm">@{user.username}</span>
-					<span>·</span>
-					<span className="text-gray-500 text-sm">{formatDateFromString(createdAt)}</span>
 				</div>
 				<div className="min-h-12">
 					<p className="whitespace-pre-line">{caption}</p>

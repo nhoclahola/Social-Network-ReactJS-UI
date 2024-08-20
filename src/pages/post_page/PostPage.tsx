@@ -31,6 +31,7 @@ const PostPage = () => {
   const auth = useAppSelector((store) => store.auth);
   const [newLikedCount, setNewLikedCount] = React.useState(post?.likedCount ? post?.likedCount : 0);
   const [newCommentCount, setNewCommentCount] = React.useState(post?.commentCount ? post?.commentCount : 0);
+  const [isLiked, setIsLiked] = React.useState(post?.liked ? post?.liked : false);
 
   React.useEffect(() => {
     setLoading(true);
@@ -47,6 +48,35 @@ const PostPage = () => {
       setLoading(false);
     })
   }, []);
+
+  React.useEffect(() => {
+    if (post) {
+      setNewLikedCount(post.likedCount);
+      setNewCommentCount(post.commentCount);
+      setIsLiked(post.liked);
+    }
+  }, [post])
+
+  const likePost = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.stopPropagation();
+		axios.put(`/api/posts/${postId}/like`, {}, {
+			baseURL: API_BASE_URL,
+			headers: {
+				"Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+			}
+		}).then((response) => {
+			if (response.data.result === "liked") {
+				setIsLiked(true);
+				setNewLikedCount((prev) => prev + 1);
+			}
+			else if (response.data.result === "unliked") {
+				setIsLiked(false);
+				setNewLikedCount((prev) => prev - 1);
+			}
+		}).catch((error) => {
+			console.error(error);
+		});
+	}
 
   const [comments, setComments] = React.useState<CommentInterface[]>([]);
   const [loadingComment, setLoadingComment] = React.useState(false);
@@ -138,7 +168,7 @@ const PostPage = () => {
     )
 
   return (
-    <div className="w-full m-5 space-y-5 shadow p-2 bg-white">
+    <div className="w-full m-5 space-y-5 shadow p-2">
       <section className="flex">
         <div>
           <Link to={`/profile/${post?.user.userId}`}>
@@ -171,8 +201,8 @@ const PostPage = () => {
           <div className="flex justify-between">
             <section className="flex gap-x-4">
               <div>
-                <IconButton className="hover:text-red-400" onClick={() => { }}>
-                  {post?.liked ? <FavoriteIcon className="text-red-500" /> : <FavoriteIcon />}
+                <IconButton className="hover:text-red-400" onClick={likePost}>
+                  {isLiked ? <FavoriteIcon className="text-red-500" /> : <FavoriteIcon />}
                 </IconButton>
                 <span>{newLikedCount}</span>
               </div>
@@ -190,8 +220,6 @@ const PostPage = () => {
             </div>
           </div>
         </div>
-        {/* {openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}
-				likedCount={newLikedCount} commentCount={newCommentCount} setLikedCount={setNewLikedCount} setCommentCount={setNewCommentCount} />} */}
       </section>
       <Divider />
       <section className="pl-4">
