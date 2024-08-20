@@ -25,6 +25,7 @@ import Stomp from "stompjs";
 import { API_BASE_URL } from "../../config/api"
 import UserFollowing from "../profile/UserFollowing"
 import UserFollowers from "../profile/UserFollowers"
+import PostPage from "../post_page/PostPage"
 
 interface HomePageProps {
   auth: any;
@@ -96,7 +97,7 @@ const HomePage = ({ auth }: HomePageProps) => {
           </Route>
           <Route path="profile/:userId/following" element={<UserFollowing />} />
           <Route path="profile/:userId/followers" element={<UserFollowers />} />
-
+          <Route path="post/:postId" element={<PostPage />} />
           <Route path="*" element={auth.user ? <Navigate to="" replace /> : <Navigate to="/login" replace />} />
         </Routes>
       </Grid>

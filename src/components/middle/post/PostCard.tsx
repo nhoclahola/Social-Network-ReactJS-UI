@@ -16,7 +16,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../../../config/api";
 import { preProcessFile } from "typescript";
 import User from "../../../utils/UserInterface";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import formatDateFromString from "../../../utils/ConvertDate";
 
 interface PostCardProps {
@@ -32,7 +32,7 @@ interface PostCardProps {
 };
 
 const stopDragging = (e: React.DragEvent) => {
-  e.preventDefault();
+	e.preventDefault();
 };
 
 const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedCount, commentCount, liked }: PostCardProps) => {
@@ -46,12 +46,13 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 
 	const [isLiked, setIsLiked] = React.useState(liked ? liked : false);
 
-	const likePost = () => {
+	const likePost = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.stopPropagation();
 		axios.put(`/api/posts/${postId}/like`, {}, {
 			baseURL: API_BASE_URL,
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
-      }
+			headers: {
+				"Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+			}
 		}).then((response) => {
 			if (response.data.result === "liked") {
 				setIsLiked(true);
@@ -66,13 +67,20 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 		});
 	}
 
+	const navigate = useNavigate();
+	const navigateToPostPage = () => {
+		navigate(`/post/${postId}`);
+	}
+
 	return (
-		<Card className="flex p-2">
-			<Link to={`/profile/${user.userId}`}>
-				<Avatar onDragStart={stopDragging} className="outline outline-2 outline-slate-300" sx={{ width: "2.5rem", height: "2.5rem", margin: "0.5rem" }} aria-label="recipe">
-					{user.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
-				</Avatar>
-			</Link>
+		<Card onClick={navigateToPostPage} className="flex p-2 cursor-pointer">
+			<div>
+				<Link to={`/profile/${user.userId}`}>
+					<Avatar onDragStart={stopDragging} className="outline outline-2 outline-slate-300" sx={{ width: "2.5rem", height: "2.5rem", margin: "0.5rem" }} aria-label="recipe">
+						{user.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
+					</Avatar>
+				</Link>
+			</div>
 			<div className="flex flex-col gap-y-2 w-full">
 				<div className="space-x-2">
 					<Link to={`/profile/${user.userId}`}>
@@ -86,14 +94,15 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 					<p className="whitespace-pre-line">{caption}</p>
 				</div>
 				{imageUrl ? <CardMedia
-					className="cursor-pointer w-full rounded-md outline outline-1 outline-slate-300"
+					className="cursor-pointer w-full rounded-md outline outline-1 outline-slate-300 z-10"
 					component="img"
-					image={imageUrl} 
+					image={imageUrl}
+					onClick={(e) => e.stopPropagation()}
 					alt="post image"
 				/> : videoUrl && <video controls className="w-full rounded-md outline outline-1 outline-slate-300">
-				<source src={videoUrl} type="video/mp4" />
-				Your browser does not support the video tag.
-			</video>}
+					<source src={videoUrl} type="video/mp4" />
+					Your browser does not support the video tag.
+				</video>}
 				<div className="flex justify-between">
 					<section className="flex gap-x-4">
 						<div>
