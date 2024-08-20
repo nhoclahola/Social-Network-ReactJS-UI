@@ -17,7 +17,8 @@ const SearchUserChat = () => {
     if (query.length > 0)
       axios.get(`/api/users/search`, {
         params: {
-          query: query
+          query: query,
+          index: 0
         },
         baseURL: API_BASE_URL,
         headers: {
