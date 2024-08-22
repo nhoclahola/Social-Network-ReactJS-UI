@@ -69,8 +69,8 @@ const Sidebar = ({ notReadNotificationCount }: SidebarProps) => {
   }
 
   const formattedNotReadingNotificationCount = React.useMemo(() => roundingNumber(notReadNotificationCount), [notReadNotificationCount])
-  const formattedName = React.useMemo(() => truncateUsername(auth.user?.firstName + " " + auth.user?.lastName, 20), []);
-  const formattedUsername = React.useMemo(() => truncateUsername(auth.user?.username, 20), []);
+  const formattedName = React.useMemo(() => truncateUsername(auth.user?.firstName + " " + auth.user?.lastName, 14), []);
+  const formattedUsername = React.useMemo(() => truncateUsername(auth.user?.username, 10), []);
 
   return (
     <Card className="h-screen flex flex-col justify-between py-5">
