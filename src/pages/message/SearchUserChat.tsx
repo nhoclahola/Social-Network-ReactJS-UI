@@ -5,11 +5,12 @@ import User from "../../utils/UserInterface";
 import lodash from "lodash";
 import truncateUsername from "../../utils/TruncateName";
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Divider, IconButton } from "@mui/material";
+import { Avatar, Divider, IconButton, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
 
 const SearchUserChat = () => {
+  const theme = useTheme();
   const [users, setUsers] = React.useState<User[]>([]);
   const [openSearch, setOpenSearch] = React.useState<boolean>(false);
 
@@ -80,9 +81,15 @@ const SearchUserChat = () => {
 
   return (
     <div className="relative z-[1] w-[60%]">
-      <input onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
+      <input
+        style={{
+          borderColor: theme.palette.primary.main,
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.background.paper,
+        }}
+        onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
       </input>
-      {openSearch && <section ref={searchSectionRef} className="border absolute w-full bg-white whitespace-nowrap shadow-xl rounded-xl">
+      {openSearch && <section ref={searchSectionRef} style={{backgroundColor: theme.palette.background.paper}} className="border absolute w-full whitespace-nowrap shadow-xl rounded-xl">
         <div className="mt-1"></div>
         {users.map(user => (
           <div className="flex justify-between items-center px-2">
@@ -104,9 +111,6 @@ const SearchUserChat = () => {
             </IconButton>
           </div>
         ))}
-        <div className="cursor-pointer">
-          <h1 className="p-2 text-center">Search more...</h1>
-        </div>
       </section>}
     </div>
   )

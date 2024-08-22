@@ -44,7 +44,7 @@ export default function SearchUserChatModal({open, handleClose}: SearchUserChatM
         <Fade in={open}>
           <Box sx={style}>
             <div className="flex flex-col items-center gap-y-5 h-[60vh]">
-              <h1>Find a user to Chat</h1>
+              <h1 className="font-bold font-serif text-xl">Find a user to communicate</h1>
               <SearchUserChat />
             </div>
           </Box>
