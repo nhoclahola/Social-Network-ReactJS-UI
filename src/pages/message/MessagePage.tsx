@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppSelector } from "../../redux/hook";
 
 
-const Message = () => {
+const MessagePage = () => {
   const stompClient = useAppSelector((store) => store.stompClient.data);
   const theme = useTheme();
   const [chats, setChats] = React.useState<ChatInterface[]>([]);
@@ -131,4 +131,4 @@ const Message = () => {
   )
 }
 
-export default Message
+export default MessagePage

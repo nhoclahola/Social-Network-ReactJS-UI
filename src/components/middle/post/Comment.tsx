@@ -44,7 +44,7 @@ const Comment = ({ comment }: CommentProps) => {
         </Avatar>
       </Link>
       <div>
-        <div style={{background: theme.palette.background.paper}} className="w-full rounded-xl border px-4 py-2 ">
+        <div style={{background: theme.palette.background.default}} className="w-full rounded-xl border px-4 py-2 ">
           <Link to={`/profile/${comment.user.userId}`}>
             <h3 className="font-semibold text-sm">{comment.user.firstName} {comment.user.lastName}</h3>
           </Link>

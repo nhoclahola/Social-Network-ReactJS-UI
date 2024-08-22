@@ -1,4 +1,4 @@
-import { Avatar, Card, CardMedia, Divider, IconButton, Typography } from "@mui/material"
+import { Avatar, Card, CardMedia, Divider, IconButton, Typography, useTheme } from "@mui/material"
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ShareIcon from '@mui/icons-material/Share';
@@ -15,6 +15,7 @@ import Loading from "./Loading";
 import CommentInterface from "../../utils/CommentInterface";
 import LoadingComment from "../../components/middle/post/LoadingComment";
 import { API_BASE_URL } from "../../config/api";
+import UserLikedModal from "../../components/middle/user_liked/UserLikedModal";
 
 const stopDragging = (e: React.DragEvent) => {
   e.preventDefault();
@@ -22,6 +23,7 @@ const stopDragging = (e: React.DragEvent) => {
 
 const PostPage = () => {
   const { postId } = useParams();
+  const theme = useTheme();
 
   const [post, setPost] = React.useState<Post | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -32,6 +34,11 @@ const PostPage = () => {
   const [newLikedCount, setNewLikedCount] = React.useState(post?.likedCount ? post?.likedCount : 0);
   const [newCommentCount, setNewCommentCount] = React.useState(post?.commentCount ? post?.commentCount : 0);
   const [isLiked, setIsLiked] = React.useState(post?.liked ? post?.liked : false);
+
+  // Open User Liked Modal
+  const [openUserLiked, setOpenUserLiked] = React.useState(false);
+	const handleOpenUserLiked = () => setOpenUserLiked(true);
+	const handleCloseUserLiked = () => setOpenUserLiked(false);
 
   React.useEffect(() => {
     setLoading(true);
@@ -168,7 +175,7 @@ const PostPage = () => {
     )
 
   return (
-    <div className="w-full m-5 space-y-5 shadow p-2">
+    <div className="w-full m-5 space-y-5">
       <section className="flex">
         <div>
           <Link to={`/profile/${post?.user.userId}`}>
@@ -204,7 +211,7 @@ const PostPage = () => {
                 <IconButton className="hover:text-red-400" onClick={likePost}>
                   {isLiked ? <FavoriteIcon className="text-red-500" /> : <FavoriteIcon />}
                 </IconButton>
-                <span>{newLikedCount}</span>
+                <span onClick={handleOpenUserLiked} className="hover:underline cursor-pointer">{newLikedCount}</span>
               </div>
               <div>
                 <IconButton>
@@ -222,7 +229,7 @@ const PostPage = () => {
         </div>
       </section>
       <Divider />
-      <section className="pl-4">
+      <section style={{backgroundColor: theme.palette.background.paper}} className="pl-4 pt-5">
         <div>
           {!isEnd && <h1 onClick={loadMoreComment} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">Load more older comments</h1>}
           {loading && <LoadingComment />}
@@ -241,7 +248,7 @@ const PostPage = () => {
             <textarea
               ref={inputRef} onKeyDown={handleKeyDown}
               rows={2} placeholder="Write your comment" title="comment"
-              className="w-full resize-none outline-none bg-transparent border border-[#3b4054] rounded-lg px-5 py-2" />
+              className="w-full resize-none outline-none bg-transparent border border-[#3b4054] rounded-lg px-5 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             <SendIcon
               onClick={handleSend}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer hover:text-cyan-500"
@@ -249,6 +256,7 @@ const PostPage = () => {
           </div>
         </div>
       </section>
+      {openUserLiked && <UserLikedModal postId={postId} open={openUserLiked} handleClose={handleCloseUserLiked} />}
     </div>
   )
 }

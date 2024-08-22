@@ -19,6 +19,7 @@ import User from "../../../utils/UserInterface";
 import { Link, useNavigate } from "react-router-dom";
 import formatDateFromString from "../../../utils/ConvertDate";
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
+import UserLikedModal from "../user_liked/UserLikedModal";
 
 interface PostCardProps {
 	postId: string;
@@ -46,6 +47,11 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 	const [newCommentCount, setNewCommentCount] = React.useState(commentCount ? commentCount : 0);
 
 	const [isLiked, setIsLiked] = React.useState(liked ? liked : false);
+
+	// Open User Liked Modal
+	const [openUserLiked, setOpenUserLiked] = React.useState(false);
+	const handleOpenUserLiked = () => setOpenUserLiked(true);
+	const handleCloseUserLiked = () => setOpenUserLiked(false);
 
 	const likePost = () => {
 		axios.put(`/api/posts/${postId}/like`, {}, {
@@ -87,7 +93,7 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 						<span className="text-gray-500 text-sm">{formatDateFromString(createdAt)}</span>
 					</div>
 					<Link to={`/post/${postId}`}>
-					<SubdirectoryArrowRightIcon className="hover:text-cyan-400" />
+						<SubdirectoryArrowRightIcon className="hover:text-cyan-400" />
 					</Link>
 				</div>
 				<div className="min-h-12">
@@ -109,7 +115,7 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 							<IconButton className="hover:text-red-400" onClick={likePost}>
 								{isLiked ? <FavoriteIcon className="text-red-500" /> : <FavoriteIcon />}
 							</IconButton>
-							<span>{newLikedCount}</span>
+							<span onClick={handleOpenUserLiked} className="hover:underline cursor-pointer">{newLikedCount}</span>
 						</div>
 						<div>
 							<IconButton className="hover:text-cyan-400" onClick={handleOpenComment}>
@@ -127,6 +133,7 @@ const PostCard = ({ postId, caption, createdAt, imageUrl, videoUrl, user, likedC
 			</div>
 			{openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={postId}
 				likedCount={newLikedCount} commentCount={newCommentCount} setLikedCount={setNewLikedCount} setCommentCount={setNewCommentCount} />}
+			{openUserLiked && <UserLikedModal postId={postId} open={openUserLiked} handleClose={handleCloseUserLiked} />}
 		</Card>
 	)
 }

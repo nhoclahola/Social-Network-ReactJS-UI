@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import Sidebar from "../../components/sidebar/Sidebar"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import MiddlePart from "../../components/middle/MiddlePart"
-import Video from "../video/VideoPage"
+import VideoPage from "../video/VideoPage"
 import Profile from "../profile/Profile"
 import HomeRight from "../../components/home_right/HomeRight"
 import ProfilePosts from "../profile/ProfilePosts"
@@ -15,9 +15,9 @@ import { getProfileAction } from "../../redux/auth/auth.action"
 import { useAppDispatch, useAppSelector } from "../../redux/hook"
 import { RootState } from "../../redux/store"
 import { Login } from "@mui/icons-material"
-import Message from "../message/MessagePage"
+import MessagePage from "../message/MessagePage"
 import ScrollToTop from "./ScrollToTop"
-import Search from "../search/SearchPage"
+import SearchPage from "../search/SearchPage"
 import NotificationPage from "../notification/NotificationPage"
 import NotificationInterface from "../../utils/NotificationInterface"
 import axios from "axios"
@@ -87,10 +87,10 @@ const HomePage = ({ auth }: HomePageProps) => {
       <Grid item className="flex justify-center" xs={12} md={location.pathname === "/messages" ? 9 : 6}>
         <Routes>
           <Route path="" element={<MiddlePart />} />
-          <Route path="videos" element={<Video />} />
-          <Route path="search" element={<Search />} />
+          <Route path="videos" element={<VideoPage />} />
+          <Route path="search" element={<SearchPage />} />
           <Route path="notifications" element={<NotificationPage setNotReadNotificationCount={setNotReadNotificationCount} newNotification={newNotification} />} />
-          <Route path="messages" element={<Message />} />
+          <Route path="messages" element={<MessagePage />} />
           <Route path="profile/:userId/*" element={<Profile />}>
             {/* replace the current history, so it does not save /profile/:id in history */}
             {/* <Route index path="*" element={<Navigate to="posts" replace/>}/>  */}

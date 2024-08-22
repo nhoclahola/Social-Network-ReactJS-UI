@@ -9,7 +9,7 @@ import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 import EndOfVideo from "./EndOfVideo";
 import { useTheme } from "@mui/material";
 
-const Video = () => {
+const VideoPage = () => {
   const [index, setIndex] = React.useState(0);
   const [posts, setPosts] = React.useState<Post[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -99,4 +99,4 @@ const Video = () => {
   )
 }
 
-export default Video
+export default VideoPage

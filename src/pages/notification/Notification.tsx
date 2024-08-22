@@ -6,6 +6,7 @@ import truncateUsername from "../../utils/TruncateName";
 import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
+import { Link } from "react-router-dom";
 
 interface NotificationProps {
   notification: NotificationInterface;
@@ -15,7 +16,8 @@ interface NotificationProps {
 
 const Notification = ({ notification, setNotifications, setNotReadNotificationCount }: NotificationProps) => {
   const theme = useTheme();
-  const markNotificationAsRead = () => {
+  const markNotificationAsRead = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     axios.put(`/api/notifications/${notification.notificationId}/read`, {}, {
       baseURL: API_BASE_URL,
       headers: {
@@ -36,7 +38,7 @@ const Notification = ({ notification, setNotifications, setNotReadNotificationCo
     });
   }
   return (
-    <div style={{background: theme.palette.background.paper}} className="flex items-center w-full justify-between hover:bg-transparent cursor-pointer shadow p-2">
+    <Link to={`/post/${notification.post.postId}`} style={{ background: theme.palette.background.paper }} className="flex items-center w-full justify-between hover:bg-transparent cursor-pointer shadow p-2">
       <div className="flex items-center gap-x-2">
         {!notification.read ? <div className="w-2 h-2 bg-cyan-500 rounded-full"></div> : <div className="w-2 h-2"></div>}
         <Avatar sx={{ width: "3rem", height: "3rem" }}>
@@ -60,7 +62,7 @@ const Notification = ({ notification, setNotifications, setNotReadNotificationCo
           </IconButton>
         </Tooltip>
       }
-    </div>
+    </Link>
   )
 }
 
