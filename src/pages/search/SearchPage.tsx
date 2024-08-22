@@ -15,7 +15,7 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const Search = () => {
+const SearchPage = () => {
   const navigate = useNavigate();
   const query = useQuery();
   const searchTerm = query.get("query"); // Get the query from the URL
@@ -180,7 +180,7 @@ const Search = () => {
       <section className="space-y-3">
         {users.length > 0 && <h1 className="font-bold font-mono text-xl">People:</h1>}
         <div className="flex flex-col gap-y-2">
-          {users.map((user) => <UserCard user={user} />)}
+          {users.map((user) => <UserCard key={user.userId} user={user} />)}
         </div>
         {loadingUsers && <LoadingPost />}
         {(!endOfUsers && !loadingUsers) && <h1 onClick={handleLoadMoreUsers} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more people</h1>}
@@ -199,4 +199,4 @@ const Search = () => {
   )
 }
 
-export default Search
+export default SearchPage
