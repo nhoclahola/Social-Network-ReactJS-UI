@@ -1,20 +1,11 @@
 import { Grid } from "@mui/material"
 import React, { useEffect } from 'react'
-import Sidebar from "../../components/sidebar/Sidebar"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import MiddlePart from "../../components/middle/MiddlePart"
 import VideoPage from "../video/VideoPage"
 import Profile from "../profile/Profile"
 import HomeRight from "../../components/home_right/HomeRight"
-import ProfilePosts from "../profile/ProfilePosts"
-import ProfileVideos from "../profile/ProfileVideos"
-import ProfileSavedPosts from "../profile/ProfileSavedPosts"
-import ProfileReposts from "../profile/ProfileReposts"
-import { useDispatch, useSelector } from "react-redux"
-import { getProfileAction } from "../../redux/auth/auth.action"
 import { useAppDispatch, useAppSelector } from "../../redux/hook"
-import { RootState } from "../../redux/store"
-import { Login } from "@mui/icons-material"
 import MessagePage from "../message/MessagePage"
 import ScrollToTop from "./ScrollToTop"
 import SearchPage from "../search/SearchPage"
@@ -26,6 +17,7 @@ import { API_BASE_URL } from "../../config/api"
 import UserFollowing from "../profile/UserFollowing"
 import UserFollowers from "../profile/UserFollowers"
 import PostPage from "../post_page/PostPage"
+import Sidebar from "../../components/sidebar/Sidebar"
 
 interface HomePageProps {
   auth: any;
