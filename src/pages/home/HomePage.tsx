@@ -17,7 +17,7 @@ import { API_BASE_URL } from "../../config/api"
 import UserFollowing from "../profile/UserFollowing"
 import UserFollowers from "../profile/UserFollowers"
 import PostPage from "../post_page/PostPage"
-import Sidebar from "../../components/sidebar/Sidebar"
+import Sidebar from "../../components/side_bar/Sidebar"
 
 interface HomePageProps {
   auth: any;
