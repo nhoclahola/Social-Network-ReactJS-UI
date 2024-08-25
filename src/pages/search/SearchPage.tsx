@@ -188,9 +188,7 @@ const SearchPage = () => {
       <section className="space-y-3">
         {posts.length > 0 && <h1 className="font-bold font-mono text-xl">Posts & Videos:</h1>}
         <div className="flex flex-col gap-y-2">
-          {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
-            createdAt={item.createdAt} imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
-            commentCount={item.commentCount} liked={item.liked} />)}
+          {posts.map((item) => <PostCard key={item.postId} post={item} />)}
         </div>
         {loadingPosts && <LoadingPost />}
         {(!endOfPosts && !loadingPosts) && <h1 onClick={handleLoadMorePosts} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">See more posts & videos</h1>}

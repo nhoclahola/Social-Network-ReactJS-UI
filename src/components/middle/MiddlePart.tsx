@@ -139,9 +139,7 @@ const MiddlePart = () => {
         </div>
       </Card>
       <div className="space-y-6">
-        {posts.map((item) => <PostCard key={item.postId} postId={item.postId} caption={item.caption}
-          createdAt={item.createdAt} imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
-          commentCount={item.commentCount} liked={item.liked} />)}
+        {posts.map((item) => <PostCard key={item.postId} post={item} />)}
       </div>
 
       {endOfPage ? <EndOfPage /> : <LoadingPost />}

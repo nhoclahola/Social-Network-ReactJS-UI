@@ -54,9 +54,7 @@ const ProfilePosts = React.memo(({ userId }: ProfilePostsProps) => {
   return (
     <div className="space-y-5 w-[100%]">
       {data.map((item) => <div key={item.postId} className="border border-slate-100 rounded-md">
-        <PostCard postId={item.postId} caption={item.caption} createdAt={item.createdAt}
-          imageUrl={item.imageUrl} videoUrl={item.videoUrl} user={item.user} likedCount={item.likedCount}
-          commentCount={item.commentCount} liked={item.liked} />
+        <PostCard post={item} />
       </div>)}
       {loading && <LoadingPost />}
       {!isEnd && <h1 onClick={loadMorePost} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">Load more older posts</h1>}

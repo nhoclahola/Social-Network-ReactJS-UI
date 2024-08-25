@@ -10,4 +10,5 @@ export default interface Post {
   likedCount: number;
   commentCount: number;
   liked: boolean;
+  saved: boolean;
 };

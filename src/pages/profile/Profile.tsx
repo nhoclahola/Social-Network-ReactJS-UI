@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material";
+import { Avatar, Box, Button, Card, Tab, Tabs, useTheme } from "@mui/material";
 import React from 'react'
 import { Link, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import ProfilePosts from "./ProfilePosts";
@@ -26,11 +26,11 @@ const stopDragging = (e: React.DragEvent) => {
 
 const Profile = () => {
   const auth = useSelector((store: RootState) => store.auth);
+  const theme = useTheme();
   // Get userId from the URL param (profile/:id)
   const { userId } = useParams();
   const [user, setUser] = React.useState<UserWithData | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
 
   const pathname = useLocation().pathname;
   const segments = pathname.split('/').filter((segment: string) => segment.length > 0);
@@ -102,6 +102,7 @@ const Profile = () => {
 
   return (
     <div className="pb-10 w-full px-5">
+    <div style={{backgroundColor: theme.palette.background.paper}}>
       <div onDragStart={stopDragging}  className="h-[15rem] bg-slate-400 cursor-pointer">
         {user?.coverPhotoUrl && <img alt="cover" className="w-full h-full rounded-md" src={user?.coverPhotoUrl}></img>}
       </div>
@@ -111,7 +112,8 @@ const Profile = () => {
         </Avatar>
         {auth?.user?.userId === userId ? <Button onClick={handleOpen} sx={{ borderRadius: "40px" }} variant="outlined">Edit Profile</Button> : <Button onClick={followUser} sx={{ borderRadius: "40px" }} variant="outlined">{isFollow ? "Unfollow" : "Follow"}</Button>}
       </div>
-      {user &&
+      {
+      user &&
         <section className="p-5">
           <div>
             <h1 className="py-1 font-bold text-xl">{user?.firstName + " " + user?.lastName}</h1>
@@ -131,6 +133,7 @@ const Profile = () => {
           </div>
         </section>
       }
+      </div>
       {user ?
         <section>
           <Box sx={{ width: '100%', borderBottom: 1, borderColor: "divider" }}>
@@ -151,7 +154,7 @@ const Profile = () => {
             <Routes>
               <Route path="posts" element={<ProfilePosts userId={userId} />} />
               <Route path="videos" element={<ProfileVideos userId={userId} />} />
-              <Route path="saved" element={<ProfileSavedPosts />} />
+              <Route path="saved" element={<ProfileSavedPosts userId={userId} />} />
               <Route path="reposts" element={<ProfileReposts />} />
               <Route index path="*" element={<Navigate to="posts" replace />} />
             </Routes>

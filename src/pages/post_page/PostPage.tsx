@@ -1,14 +1,15 @@
-import { Avatar, Card, CardMedia, Divider, IconButton, Typography, useTheme } from "@mui/material"
+import { Avatar, CardMedia, Divider, IconButton, Tooltip, Typography, useTheme } from "@mui/material"
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import React from 'react'
 import { Link, useParams } from "react-router-dom"
 import Post from "../../utils/PostInterface";
 import formatDateFromString from "../../utils/ConvertDate";
-import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
-import { useAppDispatch, useAppSelector } from "../../redux/hook";
+import { useAppSelector } from "../../redux/hook";
 import Comment from "../../components/middle/post/Comment";
 import axios from "axios";
 import Loading from "./Loading";
@@ -16,6 +17,7 @@ import CommentInterface from "../../utils/CommentInterface";
 import LoadingComment from "../../components/middle/post/LoadingComment";
 import { API_BASE_URL } from "../../config/api";
 import UserLikedModal from "../../components/middle/user_liked/UserLikedModal";
+
 
 const stopDragging = (e: React.DragEvent) => {
   e.preventDefault();
@@ -34,11 +36,12 @@ const PostPage = () => {
   const [newLikedCount, setNewLikedCount] = React.useState(post?.likedCount ? post?.likedCount : 0);
   const [newCommentCount, setNewCommentCount] = React.useState(post?.commentCount ? post?.commentCount : 0);
   const [isLiked, setIsLiked] = React.useState(post?.liked ? post?.liked : false);
+  const [isSaved, setIsSaved] = React.useState(post?.saved ? post?.saved : false)
 
   // Open User Liked Modal
   const [openUserLiked, setOpenUserLiked] = React.useState(false);
-	const handleOpenUserLiked = () => setOpenUserLiked(true);
-	const handleCloseUserLiked = () => setOpenUserLiked(false);
+  const handleOpenUserLiked = () => setOpenUserLiked(true);
+  const handleCloseUserLiked = () => setOpenUserLiked(false);
 
   React.useEffect(() => {
     setLoading(true);
@@ -61,29 +64,48 @@ const PostPage = () => {
       setNewLikedCount(post.likedCount);
       setNewCommentCount(post.commentCount);
       setIsLiked(post.liked);
+      setIsSaved(post.saved);
     }
   }, [post])
 
   const likePost = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.stopPropagation();
-		axios.put(`/api/posts/${postId}/like`, {}, {
-			baseURL: API_BASE_URL,
-			headers: {
-				"Authorization": `Bearer ${localStorage.getItem("jwt")}`,
-			}
-		}).then((response) => {
-			if (response.data.result === "liked") {
-				setIsLiked(true);
-				setNewLikedCount((prev) => prev + 1);
-			}
-			else if (response.data.result === "unliked") {
-				setIsLiked(false);
-				setNewLikedCount((prev) => prev - 1);
-			}
-		}).catch((error) => {
-			console.error(error);
-		});
-	}
+    e.stopPropagation();
+    axios.put(`/api/posts/${postId}/like`, {}, {
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    }).then((response) => {
+      if (response.data.result === "liked") {
+        setIsLiked(true);
+        setNewLikedCount((prev) => prev + 1);
+      }
+      else if (response.data.result === "unliked") {
+        setIsLiked(false);
+        setNewLikedCount((prev) => prev - 1);
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  const savePost = () => {
+    axios.put(`/api/posts/${post?.postId}/save`, {}, {
+      baseURL: API_BASE_URL,
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+      }
+    }).then((response) => {
+      if (response.data.result === "saved") {
+        setIsSaved(true);
+      }
+      else if (response.data.result === "unsaved") {
+        setIsSaved(false);
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
 
   const [comments, setComments] = React.useState<CommentInterface[]>([]);
   const [loadingComment, setLoadingComment] = React.useState(false);
@@ -221,6 +243,11 @@ const PostPage = () => {
               </div>
             </section>
             <div>
+              <Tooltip title={`${isSaved ? "Unsave this post" : "Save this post"}`}>
+                <IconButton onClick={savePost}>
+                  {isSaved ? <BookmarkIcon className="text-cyan-500" /> : <BookmarkBorderIcon className="hover:text-cyan-500" />}
+                </IconButton>
+              </Tooltip>
               <IconButton className="hover:text-cyan-500">
                 <ShareIcon />
               </IconButton>
@@ -229,7 +256,7 @@ const PostPage = () => {
         </div>
       </section>
       <Divider />
-      <section style={{backgroundColor: theme.palette.background.paper}} className="pl-4 pt-5">
+      <section style={{ backgroundColor: theme.palette.background.paper }} className="pl-4 pt-5">
         <div>
           {!isEnd && <h1 onClick={loadMoreComment} className="mb-4 text-center font-serif text-cyan-700 py-2 px-4 cursor-pointer">Load more older comments</h1>}
           {loading && <LoadingComment />}
