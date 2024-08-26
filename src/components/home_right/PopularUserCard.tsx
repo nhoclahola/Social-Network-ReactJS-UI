@@ -11,7 +11,7 @@ interface PopularUserCardProps {
 
 const PopularUserCard = ({user}: PopularUserCardProps) => {
   return (
-    <Link to={`/profile/${user.userId}`} className="border border-blue-200 rounded-full px-2 flex gap-x-4 items-center py-2">
+    <Link to={`/profile/${user.userId}`} className="border border-blue-200 rounded-full px-2 flex gap-x-4 items-center py-2 hover:ring-blue-500 hover:ring-2">
       <Avatar>
         {user.avatarUrl && <img src={user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
       </Avatar>

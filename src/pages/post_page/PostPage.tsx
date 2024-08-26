@@ -198,7 +198,7 @@ const PostPage = () => {
 
   return (
     <div className="w-full m-5 space-y-5">
-      <section className="flex">
+      <section style={{ backgroundColor: theme.palette.background.paper }} className="flex p-2">
         <div>
           <Link to={`/profile/${post?.user.userId}`}>
             <Avatar onDragStart={stopDragging} className="outline outline-2 outline-slate-300" sx={{ width: "2.5rem", height: "2.5rem", margin: "0.5rem" }} aria-label="recipe">

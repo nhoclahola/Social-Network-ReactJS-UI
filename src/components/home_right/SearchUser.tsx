@@ -74,7 +74,7 @@ const SearchUser = () => {
         color: theme.palette.text.primary,
         backgroundColor: theme.palette.background.paper,
       }}
-      ref={inputRef} onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px] focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" placeholder="Search" >
+      ref={inputRef} onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px] focus:outline-none focus:ring-2 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2" type="text" placeholder="Search" >
       </input>
       {openSearch && <section ref={searchSectionRef} style={{backgroundColor: theme.palette.background.paper}} className="border absolute w-full whitespace-nowrap shadow-xl rounded-xl">
         <div className="mt-1"></div>
