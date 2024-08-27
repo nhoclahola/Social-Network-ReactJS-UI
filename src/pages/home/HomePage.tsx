@@ -18,6 +18,7 @@ import UserFollowing from "../profile/UserFollowing"
 import UserFollowers from "../profile/UserFollowers"
 import PostPage from "../post_page/PostPage"
 import Sidebar from "../../components/side_bar/Sidebar"
+import NotificationSnackbar from "../../components/home_right/NotificationSnackbar"
 
 interface HomePageProps {
   auth: any;
@@ -66,9 +67,16 @@ const HomePage = ({ auth }: HomePageProps) => {
     };
   }, [stompClient]);
 
+  // Notification Snackbar
+  const [openNotificationSnackbar, setOpenNotificationSnackbar] = React.useState(false);
+
+  React.useEffect(() => {
+    if (newNotification) {
+      setOpenNotificationSnackbar(true);
+    }
+  }, [newNotification]);
 
   return (
-    // <div className="mx-10">
     <Grid container spacing={0} className="h-full">
       <Grid item xs={0} sx={{ display: { xs: 'none', md: 'block' } }} md={3}>
         <div className="sticky top-0">
@@ -105,8 +113,9 @@ const HomePage = ({ auth }: HomePageProps) => {
             <HomeRight></HomeRight>
           </div>
         </Grid>}
+      
+      {(openNotificationSnackbar && newNotification) && <NotificationSnackbar key={newNotification.notificationId} open={openNotificationSnackbar} setOpen={setOpenNotificationSnackbar} notification={newNotification} />}
     </Grid>
-    // </div>
   )
 }
 
