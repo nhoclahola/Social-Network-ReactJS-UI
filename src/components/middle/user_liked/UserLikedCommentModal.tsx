@@ -33,12 +33,12 @@ const style = {
 };
 
 interface UserLikedModalProps {
-  postId: string | undefined
+  commentId: string | undefined
   open: boolean;
   handleClose: () => void;
 };
 
-export default function UserLikedModal({ postId, open, handleClose }: UserLikedModalProps) {
+export default function UserLikedCommentModal({ commentId, open, handleClose }: UserLikedModalProps) {
   const [users, setUsers] = React.useState<User[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [isEnd, setIsEnd] = React.useState(true);
@@ -46,7 +46,7 @@ export default function UserLikedModal({ postId, open, handleClose }: UserLikedM
 
   React.useEffect(() => {
     setLoading(true);
-    axios.get(`/api/posts/${postId}/users/liked`, {
+    axios.get(`/api/comments/${commentId}/users/liked`, {
       params: {
         index: index,
       },

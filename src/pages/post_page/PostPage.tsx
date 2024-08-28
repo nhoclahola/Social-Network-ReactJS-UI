@@ -16,7 +16,7 @@ import Loading from "./Loading";
 import CommentInterface from "../../utils/CommentInterface";
 import LoadingComment from "../../components/middle/post/LoadingComment";
 import { API_BASE_URL } from "../../config/api";
-import UserLikedModal from "../../components/middle/user_liked/UserLikedModal";
+import UserLikedModal from "../../components/middle/user_liked/UserLikedPostModal";
 
 
 const stopDragging = (e: React.DragEvent) => {

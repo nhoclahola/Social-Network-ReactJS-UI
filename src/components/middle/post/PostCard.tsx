@@ -11,8 +11,8 @@ import { API_BASE_URL } from "../../../config/api";
 import { Link } from "react-router-dom";
 import formatDateFromString from "../../../utils/ConvertDate";
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
-import UserLikedModal from "../user_liked/UserLikedModal";
 import Post from "../../../utils/PostInterface";
+import UserLikedPostModal from "../user_liked/UserLikedPostModal";
 
 interface PostCardProps {
 	post: Post;
@@ -120,13 +120,13 @@ const PostCard = ({ post }: PostCardProps) => {
 							<IconButton className="hover:text-red-400" onClick={likePost}>
 								{isLiked ? <FavoriteIcon className="text-red-500" /> : <FavoriteIcon />}
 							</IconButton>
-							<span onClick={handleOpenUserLiked} className="hover:underline cursor-pointer">{newLikedCount}</span>
+							<span onClick={handleOpenUserLiked} className="hover:underline hover:font-bold cursor-pointer">{newLikedCount}</span>
 						</div>
 						<div>
 							<IconButton className="hover:text-cyan-400" onClick={handleOpenComment}>
 								<ChatBubbleIcon />
 							</IconButton>
-							<span>{newCommentCount}</span>
+							<span onClick={handleOpenComment} className="hover:underline hover:font-bold cursor-pointer">{newCommentCount}</span>
 						</div>
 					</section>
 					<div>
@@ -143,7 +143,7 @@ const PostCard = ({ post }: PostCardProps) => {
 			</div>
 			{openComment && <CommentModal open={openComment} handleClose={handleCloseComment} postId={post.postId}
 				likedCount={newLikedCount} commentCount={newCommentCount} setLikedCount={setNewLikedCount} setCommentCount={setNewCommentCount} />}
-			{openUserLiked && <UserLikedModal postId={post.postId} open={openUserLiked} handleClose={handleCloseUserLiked} />}
+			{openUserLiked && <UserLikedPostModal postId={post.postId} open={openUserLiked} handleClose={handleCloseUserLiked} />}
 		</Card>
 	)
 }

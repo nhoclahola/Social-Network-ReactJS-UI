@@ -7,6 +7,7 @@ import CommentInterface from "../../../utils/CommentInterface";
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import axios from "axios";
 import { API_BASE_URL } from "../../../config/api";
+import UserLikedCommentModal from "../user_liked/UserLikedCommentModal";
 
 export interface CommentProps {
   comment: CommentInterface;
@@ -35,7 +36,13 @@ const Comment = ({ comment }: CommentProps) => {
     }).catch((error) => {
       console.error(error);
     });
-  }
+  };
+
+  	// Open User Liked Modal
+	const [openUserLiked, setOpenUserLiked] = React.useState(false);
+	const handleOpenUserLiked = () => setOpenUserLiked(true);
+	const handleCloseUserLiked = () => setOpenUserLiked(false);
+
   return (
     <div className="flex flex-row gap-x-4">
       <Link to={`/profile/${comment.user.userId}`}>
@@ -51,14 +58,14 @@ const Comment = ({ comment }: CommentProps) => {
           <p className="whitespace-pre-line">{comment.content}</p>
         </div>
         <div className="flex gap-x-4 items-center">
-          {/* <h5 className="text-sm text-cyan-500 cursor-pointer ml-2">Like</h5> */}
           <div className="space-x-1">
             {isLiked ? <ThumbUpAltIcon onClick={likeComment} fontSize="small" className="cursor-pointer text-cyan-500" /> : <ThumbUpAltIcon onClick={likeComment} fontSize="small" className="cursor-pointer hover:text-cyan-500" />}
-            <span className="text-xs tracking-tighter">{likedCount}</span>
+            <span onClick={handleOpenUserLiked} className="hover:underline cursor-pointer hover:font-bold tracking-tighter">{likedCount}</span>
           </div>
           <span className="text-xs tracking-tighter">{formatDateFromString(comment.createdAt)}</span>
         </div>
       </div>
+			{openUserLiked && <UserLikedCommentModal commentId={comment.commentId} open={openUserLiked} handleClose={handleCloseUserLiked} />}
     </div>
   )
 }
