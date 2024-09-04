@@ -1,152 +1,123 @@
-import { Avatar, Card, Divider, IconButton } from "@mui/material"
-import React from 'react'
-import AddIcon from '@mui/icons-material/Add';
-import ImageIcon from '@mui/icons-material/Image';
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import ArticleIcon from '@mui/icons-material/Article';
-import PostCard from "./post/PostCard";
-import CreatePostModal from "./create_post/CreatePostModal";
-import { useAppDispatch, useAppSelector } from "../../redux/hook";
-import { getHomePagePostThunk } from "../../redux/post/post.action";
-import LoadingPost from "./loading_post/LoadingPost";
-import EndOfPage from "./end_of_page/EndOfPage";
-import axios from "axios";
-import { API_BASE_URL } from "../../config/api";
-import Post from "../../utils/PostInterface";
-import User from "../../utils/UserInterface";
-import LatestActivityFollowings from "./LatestActivityFollowings";
+import { Grid } from "@mui/material"
+import React, { useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from "react-router-dom"
+import VideoPage from "../../pages/video/VideoPage"
+import Profile from "../../pages/profile/Profile"
+import HomeRight from "../home_right/HomeRight"
+import { useAppDispatch, useAppSelector } from "../../redux/hook"
+import MessagePage from "../../pages/message/MessagePage"
+import ScrollToTop from "../../pages/home/ScrollToTop"
+import SearchPage from "../../pages/search/SearchPage"
+import NotificationPage from "../../pages/notification/NotificationPage"
+import NotificationInterface from "../../utils/NotificationInterface"
+import axios from "axios"
+import Stomp from "stompjs";
+import { API_BASE_URL } from "../../config/api"
+import UserFollowing from "../../pages/profile/UserFollowing"
+import UserFollowers from "../../pages/profile/UserFollowers"
+import PostPage from "../../pages/post_page/PostPage"
+import Sidebar from "../side_bar/Sidebar"
+import NotificationSnackbar from "../home_right/NotificationSnackbar"
+import HomePage from "../../pages/home/HomePage"
+import CommunitiesPage from "../../pages/communities/CommunitiesPage"
 
-const MiddlePart = () => {
-  const auth = useAppSelector((store) => store.auth);
+interface MiddlePartProps {
+  auth: any;
+};
 
-  const [latestActivityFollowingsUsers, setLatestActivityFollowingsUsers] = React.useState<User[]>([]);
-  const [loadingLatestActivityFollowingsUsers, setLoadingLatestActivityFollowingsUsers] = React.useState(true);
-  const [errorLatestActivityFollowingsUsers, setErrorLatestActivityFollowingsUsers] = React.useState(null);
+const MiddlePart = ({ auth }: MiddlePartProps) => {
+  const location = useLocation();
 
-  React.useEffect(() => {
-    setLoadingLatestActivityFollowingsUsers(true);
-    axios.get(`/api/users/latest-activity-followings`, {
-      baseURL: API_BASE_URL,
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
-      }
-    }).then((response) => {
-      setLatestActivityFollowingsUsers(response.data.result);
-      setLoadingLatestActivityFollowingsUsers(false);
-    }).catch((error) => {
-      setErrorLatestActivityFollowingsUsers(error);
-      setLoadingLatestActivityFollowingsUsers(false);
-    })
-  }, []);
-
-  // Post modal
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const [followingIndex, setFollowingIndex] = React.useState(0);
-  const [randomIndex, setRandomIndex] = React.useState(0);
-
-  const [posts, setPosts] = React.useState<Post[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
-
-  const [endOfPage, setEndOfPage] = React.useState(false);
+  const [notReadNotificationCount, setNotReadNotificationCount] = React.useState(0);
+  const [newNotification, setNewNotification] = React.useState<NotificationInterface | null>(null);
 
   React.useEffect(() => {
-    setLoading(true);
-    axios.get(`/api/posts/homepage`, {
+    axios.get(`/api/notifications/count_not_read`, {
       params: {
-        followingIndex: followingIndex,
-        randomIndex: randomIndex
+        index: 0,
       },
       baseURL: API_BASE_URL,
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
       }
-    })
-      .then(response => {
-        setPosts((prev) => {
-          // To check duplicate, in the end, the random new Post will duplicate
-          const newPosts = response.data.result.filter(
-            (newPost: Post) => !prev.some((prevPost) => prevPost.postId === newPost.postId)
-          );
-          if (newPosts.length < 1) {
-            window.removeEventListener('scroll', checkScrollPosition);
-            setEndOfPage(true);
-          }
-          return [...prev, ...newPosts];
-        });
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error);
-        setLoading(false);
+    }).then(response => {
+      setNotReadNotificationCount(response.data.result);
+    }).catch(error => {
+      console.error(error);
+    });
+  }, []);
+
+  const stompClient = useAppSelector((store) => store.stompClient.data);
+
+  React.useEffect(() => {
+    let subscription: Stomp.Subscription | null = null;
+    if (stompClient && stompClient.connected) {
+      subscription = stompClient?.subscribe(`/user/${auth?.user.userId}/notification/private`, (message) => {
+        const newMessage = message.body;
+        setNotReadNotificationCount((prev) => prev + 1);
+        setNewNotification(JSON.parse(newMessage));
+      }, {
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
       });
-  }, [followingIndex, randomIndex]);
-
-  // To debug
-  React.useEffect(() => {
-    console.log("posts", posts);
-
-  }, [posts]);
-
-
-  const checkScrollPosition = React.useCallback(() => {
-    const scrollTop = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-
-    // Check if user scrolled to the bottom of the page
-    if (scrollTop + windowHeight >= documentHeight) {
-      window.scrollBy(0, -400);
-      setFollowingIndex((prev) => prev + 10);
-      setRandomIndex((prev) => prev + 2);
     }
-  }, []);
+    // Cleanup function to disconnect STOMP client when component unmounts
+    return () => {
+      if (subscription) {
+        subscription?.unsubscribe();
+      }
+    };
+  }, [stompClient]);
+
+  // Notification Snackbar
+  const [openNotificationSnackbar, setOpenNotificationSnackbar] = React.useState(false);
 
   React.useEffect(() => {
-    window.addEventListener('scroll', checkScrollPosition);
-    return () => {
-      window.removeEventListener('scroll', checkScrollPosition);
-    };
-  }, []);
-
-  // Add post when user create new Post
-  const addPost = (newPost: Post) => {
-    setPosts((prev) => [newPost, ...prev]);
-  }
+    if (newNotification) {
+      setOpenNotificationSnackbar(true);
+    }
+  }, [newNotification]);
 
   return (
-    <div className="space-y-4 w-full px-5">
-      <Card className="flex items-center space-x-4 p-5 rounded-b-md">
-        {
-          loadingLatestActivityFollowingsUsers ? <LoadingPost /> :
-            latestActivityFollowingsUsers.map((item) => <LatestActivityFollowings key={item.userId} user={item} ></LatestActivityFollowings>)
-        }
-      </Card>
-      <Card className="p-4">
-        <div className="flex justify-between items-center">
-          <Avatar className="mr-6 outline outline-2 outline-slate-300">
-            {auth.user?.avatarUrl && <img src={auth.user.avatarUrl} alt="avatar" className="h-full w-auto object-cover" />}
-          </Avatar>
-          <input
-            onClick={handleOpen}
-            readOnly
-            className="w-[90%] bg-transparent rounded-full p-5 border hover:outline-none hover:ring-2 hover:ring-blue-500 cursor-pointer"
-            type="text"
-            placeholder="What are you thinking?"></input>
+    <Grid container spacing={0} className="h-full">
+      <Grid item xs={0} sx={{ display: { xs: 'none', md: 'block' } }} md={3}>
+        <div className="sticky top-0">
+          <Sidebar notReadNotificationCount={notReadNotificationCount}></Sidebar>
         </div>
-      </Card>
-      <div className="space-y-6">
-        {posts.map((item) => <PostCard key={item.postId} post={item} />)}
-      </div>
+      </Grid>
 
-      {endOfPage ? <EndOfPage /> : <LoadingPost />}
+      <Grid item className="flex justify-center" xs={12} md={location.pathname === "/messages" ? 9 : 6}>
+        <Routes>
+          <Route path="" element={<HomePage />} />
+          <Route path="videos" element={<VideoPage />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="notifications" element={<NotificationPage setNotReadNotificationCount={setNotReadNotificationCount} newNotification={newNotification} />} />
+          <Route path="communities" element={<CommunitiesPage />} />
+          <Route path="messages" element={<MessagePage />} />
+          <Route path="profile/:userId/*" element={<Profile />}>
+            {/* replace the current history, so it does not save /profile/:id in history */}
+            {/* <Route index path="*" element={<Navigate to="posts" replace/>}/>  */}
+          </Route>
+          <Route path="profile/:userId/following" element={<UserFollowing />} />
+          <Route path="profile/:userId/followers" element={<UserFollowers />} />
+          <Route path="post/:postId" element={<PostPage />} />
+          <Route path="*" element={auth.user ? <Navigate to="" replace /> : <Navigate to="/login" replace />} />
+        </Routes>
+      </Grid>
 
-      {/* Modal */}
-      <CreatePostModal open={open} handleClose={handleClose} addPost={addPost}></CreatePostModal>
-    </div>
+      {/* {location.pathname === "/" && <Grid item lg={3} className="">
+          <div className="sticky top-0 w-full">
+            <HomeRight></HomeRight>
+          </div>
+        </Grid>} */}
+      {location.pathname !== "/messages" &&
+        <Grid item xs={0} md={3} sx={{ display: { xs: 'none', md: 'block' } }} className="">
+          <div className="sticky top-0 w-full">
+            <HomeRight></HomeRight>
+          </div>
+        </Grid>}
+      
+      {(openNotificationSnackbar && newNotification) && <NotificationSnackbar key={newNotification.notificationId} open={openNotificationSnackbar} setOpen={setOpenNotificationSnackbar} notification={newNotification} />}
+    </Grid>
   )
 }
 

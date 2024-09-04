@@ -4,7 +4,6 @@ import './App.css';
 import Authentication from './pages/auth/Authentication';
 import { Navigate, Route, Routes } from "react-router-dom";
 import Message from "./pages/message/MessagePage";
-import HomePage from "./pages/home/HomePage";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import { useSelector } from "react-redux";
@@ -18,6 +17,7 @@ import { setStompClientThunk } from "./redux/web_socket/webSocket.action";
 import { CssBaseline, GlobalStyles, ThemeProvider } from "@mui/material";
 import { dark } from "./theme/dark";
 import { light } from "./theme/light";
+import MiddlePart from "./components/middle/MiddlePart";
 
 const getThemeByName = (theme: string) => {
   return themeMap[theme];
@@ -126,7 +126,7 @@ function App() {
           })}
         />
         <Routes>
-          <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <HomePage auth={auth} /> : <Authentication />}></Route>
+          <Route path="/*" element={loading ? <Loading /> : auth.user && jwt ? <MiddlePart auth={auth} /> : <Authentication />}></Route>
         </Routes>
       </ThemeProvider>
     </ThemeContext.Provider>

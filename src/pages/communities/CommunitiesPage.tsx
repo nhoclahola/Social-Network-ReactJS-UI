@@ -3,36 +3,14 @@ import React from 'react'
 import PostCard from "../../components/middle/post/PostCard";
 import CreatePostModal from "../../components/middle/create_post/CreatePostModal";
 import { useAppSelector } from "../../redux/hook";
-import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 import EndOfPage from "../../components/middle/end_of_page/EndOfPage";
 import axios from "axios";
 import { API_BASE_URL } from "../../config/api";
 import Post from "../../utils/PostInterface";
-import User from "../../utils/UserInterface";
-import LatestActivityFollowings from "./LatestActivityFollowings";
+import LoadingPost from "../../components/middle/loading_post/LoadingPost";
 
-const HomePage = () => {
+const CommunitiesPage = () => {
   const auth = useAppSelector((store) => store.auth);
-
-  const [latestActivityFollowingsUsers, setLatestActivityFollowingsUsers] = React.useState<User[]>([]);
-  const [loadingLatestActivityFollowingsUsers, setLoadingLatestActivityFollowingsUsers] = React.useState(true);
-  const [errorLatestActivityFollowingsUsers, setErrorLatestActivityFollowingsUsers] = React.useState(null);
-
-  React.useEffect(() => {
-    setLoadingLatestActivityFollowingsUsers(true);
-    axios.get(`/api/users/latest-activity-followings`, {
-      baseURL: API_BASE_URL,
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
-      }
-    }).then((response) => {
-      setLatestActivityFollowingsUsers(response.data.result);
-      setLoadingLatestActivityFollowingsUsers(false);
-    }).catch((error) => {
-      setErrorLatestActivityFollowingsUsers(error);
-      setLoadingLatestActivityFollowingsUsers(false);
-    })
-  }, []);
 
   // Post modal
   const [open, setOpen] = React.useState(false);
@@ -49,7 +27,7 @@ const HomePage = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    axios.get(`/api/posts/homepage`, {
+    axios.get(`/api/posts/communities`, {
       params: {
         index: index,
       },
@@ -111,12 +89,6 @@ const HomePage = () => {
 
   return (
     <div className="space-y-4 w-full px-5">
-      <Card className="flex items-center space-x-4 p-5 rounded-b-md">
-        {
-          loadingLatestActivityFollowingsUsers ? <LoadingPost /> :
-            latestActivityFollowingsUsers.map((item) => <LatestActivityFollowings key={item.userId} user={item} ></LatestActivityFollowings>)
-        }
-      </Card>
       <Card className="p-4">
         <div className="flex justify-between items-center">
           <Avatar className="mr-6 outline outline-2 outline-slate-300">
@@ -134,7 +106,7 @@ const HomePage = () => {
         {posts.map((item) => <PostCard key={item.postId} post={item} />)}
       </div>
 
-      {endOfPage ? <EndOfPage /> : <LoadingPost />}
+      {!endOfPage && <LoadingPost /> }
 
       {/* Modal */}
       <CreatePostModal open={open} handleClose={handleClose} addPost={addPost}></CreatePostModal>
@@ -142,4 +114,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default CommunitiesPage
