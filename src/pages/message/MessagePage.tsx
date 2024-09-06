@@ -126,7 +126,7 @@ const MessagePage = () => {
           <Chat chat={selectedChat} setChats={setChats} />
         </div>
       </Grid>
-      {openSearch && <SearchUserChatModal open={openSearch} handleClose={closeSearchChat} />}
+      {openSearch && <SearchUserChatModal open={openSearch} handleClose={closeSearchChat} setChats={setChats} />}
     </Grid>
   )
 }

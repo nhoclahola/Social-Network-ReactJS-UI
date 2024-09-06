@@ -6,6 +6,7 @@ import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import SearchUserChat from "./SearchUserChat";
+import ChatInterface from "../../utils/ChatInterface";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -22,9 +23,10 @@ const style = {
 interface SearchUserChatModalProps {
   open: boolean;
   handleClose: () => void;
+  setChats: React.Dispatch<React.SetStateAction<ChatInterface[]>>
 };
 
-export default function SearchUserChatModal({open, handleClose}: SearchUserChatModalProps) {
+export default function SearchUserChatModal({open, handleClose, setChats}: SearchUserChatModalProps) {
 
   return (
     <div>
@@ -45,7 +47,7 @@ export default function SearchUserChatModal({open, handleClose}: SearchUserChatM
           <Box sx={style}>
             <div className="flex flex-col items-center gap-y-5 h-[60vh]">
               <h1 className="font-bold font-serif text-xl">Find a user to communicate</h1>
-              <SearchUserChat />
+              <SearchUserChat setChats={setChats} />
             </div>
           </Box>
         </Fade>

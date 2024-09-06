@@ -8,8 +8,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Avatar, Divider, IconButton, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
+import ChatInterface from "../../utils/ChatInterface";
 
-const SearchUserChat = () => {
+interface SearchUserChatProps {
+  setChats: React.Dispatch<React.SetStateAction<ChatInterface[]>>;
+};
+
+const SearchUserChat = ({ setChats }: SearchUserChatProps) => {
   const theme = useTheme();
   const [users, setUsers] = React.useState<User[]>([]);
   const [openSearch, setOpenSearch] = React.useState<boolean>(false);
@@ -73,7 +78,14 @@ const SearchUserChat = () => {
         "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
       }
     }).then((response) => {
-      console.log(response.data);
+      const newChat: ChatInterface = response.data.result;
+      setChats((prevChats) => {
+        const chatExists = prevChats.some(chat => chat.chatId === newChat.chatId);
+        if (!chatExists) {
+          return [newChat, ...prevChats];
+        }
+        return prevChats;
+      });
     }).catch((error) => {
       console.error("error", error);
     });
@@ -89,7 +101,7 @@ const SearchUserChat = () => {
         }}
         onFocus={handleInputChange} onChange={handleInputChange} className="w-full p-2 rounded-lg border-[2px]" type="text" placeholder="Search" >
       </input>
-      {openSearch && <section ref={searchSectionRef} style={{backgroundColor: theme.palette.background.paper}} className="border absolute w-full whitespace-nowrap shadow-xl rounded-xl">
+      {openSearch && <section ref={searchSectionRef} style={{ backgroundColor: theme.palette.background.paper }} className="border absolute w-full whitespace-nowrap shadow-xl rounded-xl">
         <div className="mt-1"></div>
         {users.map(user => (
           <div className="flex justify-between items-center px-2">
