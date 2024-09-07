@@ -5,12 +5,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { replace } from "formik";
-import Stomp from "stompjs";
-import { useAppSelector } from "../../redux/hook";
-import NotificationInterface from "../../utils/NotificationInterface";
-import axios from "axios";
-import { API_BASE_URL } from "../../config/api";
 import { ThemeContext } from "../../App";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness5Icon from '@mui/icons-material/Brightness5';
@@ -39,8 +33,11 @@ const Sidebar = ({ notReadNotificationCount }: SidebarProps) => {
   };
 
   const handleNavigate = (item: NavigationItem) => {
-    if (item.title === "Profile")
+    if (item.title === "Profile") {
+      if (location.pathname.includes(`${item.path}/${auth.user.userId}`))
+        return;
       navigate(`/profile/${auth.user?.userId}`, { replace: true });
+    }
     else if (item.title === "Search") {
       if (!!location.search && location.pathname === "/search")
         navigate(item.path + location.search, { replace: true });
@@ -78,14 +75,14 @@ const Sidebar = ({ notReadNotificationCount }: SidebarProps) => {
         <Link to="/">
           <div className="flex justify-center items-center">
             <img alt="Y" src="/favicon.ico" className="w-[10%] h-[10%]"></img>
-            <span className="font-bold text-xl ml-2">Y.COM</span>
+            <span className="font-bold text-xl ml-2">Y SOCIAL MEDIA</span>
           </div>
         </Link>
         <div className="space-y-2">
           {
             navigationMenu.map((item, index) => {
               return (
-                <div key={index} onClick={() => handleNavigate(item)} className={`flex items-center cursor-pointer space-x-3 ${location.pathname !== item.path && "hover:bg-slate-300"} py-4 px-2 rounded-xl ${location.pathname === item.path && "bg-cyan-500"}`}>
+                <div key={index} onClick={() => handleNavigate(item)} className={`flex items-center cursor-pointer space-x-3 ${location.pathname !== item.path && "hover:bg-slate-300"} py-4 px-2 rounded-xl ${(location.pathname === item.path || location.pathname.includes(`${item.path}/${auth.user.userId}`)) && "bg-cyan-500"}`}>
                   {item.icon}
                   <p className="text-xl">{item.title}</p>
                   {(item.title === "Notifications" && notReadNotificationCount > 0) && <div className="bg-red-600 rounded-full flex justify-center items-center px-1"><span className="text-sm text-white">{formattedNotReadingNotificationCount}</span></div>}

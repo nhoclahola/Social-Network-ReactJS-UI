@@ -4,7 +4,6 @@ import { Link, Navigate, Outlet, Route, Routes, useLocation, useNavigate, usePar
 import ProfilePosts from "./ProfilePosts";
 import ProfileVideos from "./ProfileVideos";
 import ProfileSavedPosts from "./ProfileSavedPosts";
-import ProfileReposts from "./ProfileReposts";
 import EditProfileModal from "./EditProfileModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -19,7 +18,6 @@ const tabs = [
   { value: "posts", name: "Posts" },
   { value: "videos", name: "Videos" },
   { value: "saved", name: "Saved" },
-  { value: "reposts", name: "Reposts" }
 ]
 
 const stopDragging = (e: React.DragEvent) => {
@@ -343,11 +341,10 @@ const Profile = () => {
           {value === "repost" && <ProfileReposts></ProfileReposts>} */}
             {/* <Outlet /> */}
             <Routes>
-              <Route path="posts" element={<ProfilePosts userId={userId} />} />
+              <Route path="" element={<ProfilePosts userId={userId} />} />
               <Route path="videos" element={<ProfileVideos userId={userId} />} />
               <Route path="saved" element={<ProfileSavedPosts userId={userId} />} />
-              <Route path="reposts" element={<ProfileReposts />} />
-              <Route index path="*" element={<Navigate to="posts" replace />} />
+              <Route index path="*" element={<Navigate to="" replace />} />
             </Routes>
           </div>
         </section>
