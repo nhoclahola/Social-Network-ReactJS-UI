@@ -31,7 +31,7 @@ const Message = ({ isSender, message, showAvatar, showTimestamp }: MessageProps)
           </Avatar> : <div className="w-[2rem]"></div>}
         <div onClick={handleClickMessage} className={` cursor-pointer bg-red-300 rounded-xl max-w-[80%] ${isSender && "ml-[20%]"}`}>
           {message.imageUrl && <img className="rounded-t-xl" alt="Message" src="http://127.0.0.1:8080/uploads/posts/user-7c25070c-b33c-43c2-867d-ea5981abb428/images/e4ff7bafe84841b2bb255c282d43af0b.jpg"></img>}
-          <p className={` mx-4 py-2`}>{message.content}</p>
+          <p className={`mx-4 py-2 break-words`}>{message.content}</p>
         </div>
       </div>
     </div>
