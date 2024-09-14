@@ -1,5 +1,7 @@
 export default function formatTimestamp(dateString: string): string {
-  const date = new Date(dateString);
+  // Add 'Z' at the end of the string to indicate that dateString is in UTC
+	const utcDateString = `${dateString}Z`;
+  const date = new Date(utcDateString);
   const now = new Date();
 
   const isSameDay = date.getDate() === now.getDate() &&
